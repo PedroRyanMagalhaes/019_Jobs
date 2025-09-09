@@ -11,7 +11,7 @@ def human_delay(min_seconds=0.5, max_seconds=2):
 
     time.sleep(random.uniform(min_seconds, max_seconds))
 
-def raspar_ciandt():
+def raspar():
     print("🚀 Iniciando scraping da CI&T...")
     vagas_encontradas = []
 
@@ -112,7 +112,7 @@ def raspar_ciandt():
 
 if __name__ == "__main__":
     print("--- MODO DE TESTE DO SCRAPER CI&T ---")
-    vagas_coletadas = raspar_ciandt()
+    vagas_coletadas = raspar()
 
     if vagas_coletadas:
         print(f"\n✅ SUCESSO! Total de {len(vagas_coletadas)} vagas encontradas.")

@@ -1,1 +1,7 @@
 anotacoes.txt/
+.vscode/
+.venv/
+__pycache__/
+database.py
+modulos/__pycache__/
+modulos/indeed.py
