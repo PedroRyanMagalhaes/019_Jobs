@@ -2,65 +2,59 @@ from playwright.sync_api import sync_playwright, TimeoutError
 import time
 import random
 
-# User agent para simular um navegador comum e evitar bloqueios simples
+# Definir constantes no início do arquivo torna o código mais legível e fácil de manter.
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
 URL_CIANDT = "https://ciandt.com/br/pt-br/carreiras/oportunidades"
 BASE_URL = "https://ciandt.com"
 
-def human_delay(min_seconds=2, max_seconds=5):
-    """Simula um atraso humano para não sobrecarregar o servidor."""
+def human_delay(min_seconds=0.5, max_seconds=2):
+
     time.sleep(random.uniform(min_seconds, max_seconds))
 
 def raspar_ciandt():
-    """
-    Realiza o web scraping das vagas da CI&T no Brasil.
-    Utiliza técnicas para parecer mais 'humano'.
-    """
     print("🚀 Iniciando scraping da CI&T...")
     vagas_encontradas = []
 
     with sync_playwright() as p:
+        browser = None # Inicializa a variável do navegador
         try:
-            browser = p.chromium.launch(headless=True) # Mude para False para ver o navegador em ação
-            
-            # Cria um contexto de navegador com configurações que mascaram a automação
+            browser = p.chromium.launch(headless=True)
             context = browser.new_context(
                 user_agent=USER_AGENT,
-                viewport={'width': 1920, 'height': 1080},
                 locale='pt-BR'
             )
             page = context.new_page()
             
-            print(f"Navegando para {URL_CIANDT}...")
+            print(f"Navegando para a página de carreiras da CI&T...")
             page.goto(URL_CIANDT, timeout=60000)
-            
-            # Espera a página carregar completamente e adiciona um delay
-            page.wait_for_load_state('networkidle')
-            human_delay()
-
-            # Tenta aceitar o banner de cookies se ele aparecer
+        
+            # Bloco 'try' para lidar com o banner de cookies, que pode ou não aparecer.
             try:
-                print("Procurando por banner de cookies...")
-                cookie_button = page.locator('button:has-text("Aceitar e fechar")')
-                if cookie_button.is_visible():
-                    cookie_button.click()
-                    print("Banner de cookies aceito.")
-                    human_delay()
+                print("Procurando por banner de cookies para declinar...")
+                # Usando o XPath fornecido para localizar o botão 'Declinar'.
+                decline_button = page.locator('xpath=/html/body/div[2]/div/div/div[2]/button[2]')
+                decline_button.click(timeout=5000)
+                print("✅ Banner de cookies declinado com sucesso.")
+                human_delay()
             except TimeoutError:
-                print("Banner de cookies não encontrado ou não visível.")
+                print("☑️ Banner de cookies não encontrado ou não visível (o que é normal).")
 
-            # Filtra por vagas no Brasil
-            print("Filtrando por vagas no Brasil...")
-            page.locator('button:has-text("País")').click()
-            human_delay(1, 2)
-            page.locator('label:has-text("Brazil")').click()
+            try:
+                print("Fechando botao OK")
+                ok_button = page.locator('xpath=//*[@id="modalOkBtn"]')
+                ok_button.click(timeout=5000)
+                print("✅ Botao OK fechado com sucesso.")
+            except TimeoutError:
+                print("☑️ Botao OK não encontrado ou não visível (o que é normal).")
+
             
-            # Espera o filtro ser aplicado
-            print("Aguardando aplicação do filtro...")
-            page.wait_for_timeout(5000) # Espera explícita para a UI atualizar
+            # --- Interação com a página para filtrar vagas ---
+            print("Filtrando por vagas no Brasil...")
+            searcth_input = page.locator('#filter-by-text')
+            searcth_input.fill("Brazil")
+            searcth_input.press("Enter")
 
             print("Buscando a lista de vagas...")
-            # Localiza todos os contêineres de vagas
             vagas_items = page.locator('div.opprtunity-item').all()
             print(f"Encontrados {len(vagas_items)} itens de vagas na página.")
 
@@ -68,24 +62,40 @@ def raspar_ciandt():
                 print("Nenhuma vaga encontrada após aplicar o filtro.")
                 return []
 
+            # Itera sobre cada item de vaga encontrado para extrair as informações.
             for item in vagas_items:
                 try:
                     titulo = item.locator('h2').inner_text()
+                    partes_titulo = titulo.split(',')
                     link_relativo = item.locator('a').get_attribute('href')
+
                     url_vaga = f"{BASE_URL}{link_relativo}"
                     
-                    # Limpa o título, removendo a localidade que vem junto
+                    localizacao = ", ".join([p.strip() for p in partes_titulo[1:]]) if len(partes_titulo) > 1 else "Brazil"
+                    if "Brazil" not in localizacao and "Campinas" not in localizacao:
+                        continue
+  
                     titulo_limpo = titulo.split(',')[0].strip()
-                    
+
+                    modelo_trabalho = "Nao informado"
+                    hidden_span_text = item.locator('span.sr-only.filters-item').inner_text()
+
+                    modelo_palavra_chave = hidden_span_text.split()
+                    for palavra in modelo_palavra_chave:
+                        if palavra.startswith('Workplace_type_'):
+                            modelo_trabalho = palavra.split('_')[-1]
+                            break
+
                     vaga = {
                         "empresa": "CI&T",
                         "titulo": titulo_limpo,
-                        "localizacao": "Brazil",
+                        "modelo_trabalho": modelo_trabalho,
+                        "localizacao": localizacao,
                         "url_vaga": url_vaga,
                     }
                     vagas_encontradas.append(vaga)
                 except Exception as e:
-                    print(f"Erro ao extrair dados de um item de vaga: {e}")
+                    print(f"⚠️ Erro ao extrair dados de um item de vaga: {e}")
             
             print(f"Scraping da CI&T finalizado. Total de vagas extraídas: {len(vagas_encontradas)}")
 
@@ -94,8 +104,22 @@ def raspar_ciandt():
         except Exception as e:
             print(f"❌ Ocorreu um erro inesperado durante o scraping: {e}")
         finally:
-            if 'browser' in locals() and browser.is_connected():
+            if browser and browser.is_connected():
                 browser.close()
     
     return vagas_encontradas
 
+
+if __name__ == "__main__":
+    print("--- MODO DE TESTE DO SCRAPER CI&T ---")
+    vagas_coletadas = raspar_ciandt()
+
+    if vagas_coletadas:
+        print(f"\n✅ SUCESSO! Total de {len(vagas_coletadas)} vagas encontradas.")
+        print("--- Exibindo as 5 primeiras vagas: ---")
+
+        for i, vaga in enumerate(vagas_coletadas): # Limita a exibição às 5 primeiras
+            print(f"\n--- VAGA {i+1} ---")
+            print(vaga)
+    else:
+        print("\n❌ Nenhuma vaga foi encontrada durante o teste.")
