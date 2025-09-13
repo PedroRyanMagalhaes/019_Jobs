@@ -18,7 +18,7 @@ def inicializar_banco():
             empresa TEXT NOT NULL,
             titulo TEXT NOT NULL,
             localizacao TEXT,
-            modelo_trabalho TEXT, -- <<< CAMPO ADICIONADO
+            modelo_trabalho TEXT,
             url_vaga TEXT NOT NULL UNIQUE,
             classificacao_ia TEXT,
             data_coleta TEXT NOT NULL
@@ -34,9 +34,6 @@ def inicializar_banco():
             print("Conexão com o banco de dados fechada.")
 
 def salvar_vaga(dados_vaga):
-    """
-    Salva uma única vaga no banco de dados, incluindo o modelo de trabalho.
-    """
     conexao = None
     try:
         conexao = sqlite3.connect(DB_FILE)
@@ -55,7 +52,6 @@ def salvar_vaga(dados_vaga):
         return True
 
     except sqlite3.IntegrityError:
-        # print(f"☑️ Vaga já existe no banco: '{dados_vaga['titulo']}'") # Comentado para um log mais limpo
         return False
     except sqlite3.Error as e:
         print(f"❌ Erro ao salvar vaga no banco: {e}")

@@ -1,26 +1,18 @@
 import database
-from modulos import ciandt # Futuramente: from modulos import ciandt, cpfl, ...
+from modulos import ciandt 
 
-# --- ÁREA DE CONFIGURAÇÃO ---
-# Para adicionar um novo scraper, importe-o acima e adicione-o a esta lista.
 # O formato é: (módulo_do_scraper, "Nome da Empresa para Exibição")
 SCRAPERS_A_EXECUTAR = [
     (ciandt, "CI&T"),
-    # (cpfl, "CPFL Energia"), # Exemplo de como você adicionaria o próximo
 ]
 
 def main():
-    """
-    Função principal que orquestra de forma genérica o processo de scraping e armazenamento.
-    """
-    print("==============================================")
     print("== INICIANDO PROCESSO DE COLETA DE VAGAS ==")
     print("==============================================")
 
     print("\n--- PASSO 1: Preparando o Banco de Dados ---")
     database.inicializar_banco()
 
-    # Loop principal que executa cada scraper configurado na lista
     for scraper_module, nome_empresa in SCRAPERS_A_EXECUTAR:
         print(f"\n--- PASSO: Executando Scraper da {nome_empresa} ---")
         vagas_coletadas = []
@@ -42,7 +34,6 @@ def main():
 
     print("\n==============================================")
     print("== PROCESSO FINALIZADO ==")
-    print("==============================================")
 
 
 if __name__ == "__main__":
