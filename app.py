@@ -1,9 +1,16 @@
-import database
-from modulos import ciandt 
+from src.database import database
+from src.scrapers import ciandt
+from config.settings import SCRAPERS_ATIVOS
 
-# O formato é: (módulo_do_scraper, "Nome da Empresa para Exibição")
+# Mapeamento de nomes para módulos
+SCRAPERS_MAP = {
+    "ciandt": ciandt
+}
+
+# Criar lista de scrapers a partir das configurações
 SCRAPERS_A_EXECUTAR = [
-    (ciandt, "CI&T"),
+    (SCRAPERS_MAP[nome_modulo], nome_empresa) 
+    for nome_modulo, nome_empresa in SCRAPERS_ATIVOS
 ]
 
 def main():

@@ -1,7 +1,12 @@
 import sqlite3
 from datetime import date
+import os
+from config.settings import DATABASE_CONFIG
 
-DB_FILE = "vagas.db"
+DB_FILE = DATABASE_CONFIG["db_file"]
+
+# Criar diretório data se não existir
+os.makedirs(os.path.dirname(DB_FILE), exist_ok=True)
 
 def inicializar_banco():
     conexao = None

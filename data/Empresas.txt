@@ -86,17 +86,17 @@ https://carreirasype.gupy.io/
 
 ---------------------------------------------------------------------------------------
 Empresas Região de Campinas:
-Enforce
-Ambev Tech
-Agibank
-iFood
-Magazine Luiza (Magalu)
-Raízen
+Enforce  - ok
+Ambev Tech - ok
+Agibank - ok
+iFood - ok
+Magazine Luiza (Magalu)  - ok 
+Raízen #talvez
 Bayer
 Santander
 Itaú Unibanco
-ClearSale
-Movile
+ClearSale #barueri
+Movile #ta fora site
 Ypê
 CI&T
 IBM
