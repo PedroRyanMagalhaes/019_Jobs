@@ -8,15 +8,15 @@ DATABASE_CONFIG = {
 
 # Configurações dos scrapers
 SCRAPER_CONFIG = {
-    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chromium/118.0.0.0 Chrome/118.0.0.0 Safari/537.36",
     "timeout": 60000,
     "headless": True,
     "delay_min": 0.5,
     "delay_max": 1.5
 }
 
-# Localizações alvo para as vagas
-LOCAIS_ALVO = ["Campinas", "Brazil", "São Paulo", "SP"]
+# Localizações alvo para as vagas (apenas Campinas e Brazil)
+LOCAIS_ALVO = ["Campinas", "Brazil", "Brasil"]
 
 # URLs das empresas
 EMPRESA_URLS = {

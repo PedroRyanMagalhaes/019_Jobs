@@ -2,6 +2,8 @@ from playwright.sync_api import sync_playwright, TimeoutError
 import time
 import random
 import re
+import os
+from datetime import datetime
 from config.settings import SCRAPER_CONFIG, LOCAIS_ALVO, EMPRESA_URLS
 
 # --- CONSTANTES ---
@@ -16,23 +18,123 @@ def human_delay(min_seconds=None, max_seconds=None):
     max_sec = max_seconds or SCRAPER_CONFIG["delay_max"]
     time.sleep(random.uniform(min_sec, max_sec))
 
+def salvar_vagas_descartadas(vagas_descartadas, nome_empresa="CI&T"):
+    """Salva apenas as vagas que foram descartadas para verificação do filtro."""
+    try:
+        if not vagas_descartadas:
+            print("✅ Nenhuma vaga foi descartada - filtro funcionando perfeitamente!")
+            return None
+            
+        # Criar diretório data se não existir
+        os.makedirs("data", exist_ok=True)
+        
+        # Nome do arquivo com timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        nome_arquivo = f"data/vagas_descartadas_{nome_empresa.lower().replace('&', 'e')}_{timestamp}.txt"
+        
+        with open(nome_arquivo, 'w', encoding='utf-8') as arquivo:
+            arquivo.write(f"=== VAGAS DESCARTADAS - {nome_empresa} ===\n")
+            arquivo.write(f"Data/Hora: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n")
+            arquivo.write(f"Total de vagas descartadas: {len(vagas_descartadas)}\n")
+            arquivo.write(f"Motivo: Localização não está em {LOCAIS_ALVO}\n")
+            arquivo.write("="*60 + "\n\n")
+            
+            for i, vaga in enumerate(vagas_descartadas, 1):
+                arquivo.write(f"VAGA DESCARTADA {i:03d}:\n")
+                arquivo.write(f"  Texto Original: {vaga['texto_original']}\n")
+                arquivo.write(f"  Título Extraído: {vaga['titulo']}\n")
+                arquivo.write(f"  Localização Extraída: {vaga['localizacao']}\n")
+                arquivo.write(f"  Motivo Descarte: {vaga['motivo']}\n")
+                arquivo.write(f"  URL: {vaga['url_vaga']}\n")
+                arquivo.write("-" * 40 + "\n\n")
+        
+        print(f"⚠️ {len(vagas_descartadas)} vagas foram descartadas - verifique o arquivo: {nome_arquivo}")
+        return nome_arquivo
+        
+    except Exception as e:
+        print(f"❌ Erro ao salvar arquivo de vagas descartadas: {e}")
+        return None
+
 def extrair_titulo_e_localizacao(texto_completo):
     """
     Função inteligente para separar o título da localização.
-    Busca pelas palavras-chave de localização (LOCAIS_ALVO) de trás para frente.
+    Trata casos especiais como minorias e vírgulas no título.
     """
-    texto_lower = texto_completo.lower()
+    import re
     
+    # Remove quebras de linha e espaços extras
+    texto_completo = ' '.join(texto_completo.split())
+    
+    # Padrões para remover informações sobre vagas afirmativas
+    padroes_afirmativos = [
+        r'\s*\(.*?afirmativ.*?\)',
+        r'\s*\(.*?mulher.*?\)',
+        r'\s*\(.*?pessoa.*?deficiência.*?\)',
+        r'\s*\(.*?pretas.*?\)',
+        r'\s*\(.*?lgbtqiapn.*?\)',
+        r'\s*\(.*?diversidade.*?\)',
+        r'\s*\(.*?inclus.*?\)',
+        r'\s*\|\s*vaga\s+afirmativa.*?(?=\s|$)',
+        r'\s*-\s*afirmativa.*?(?=\s|$)',
+        r'\s*\|\s*affirmative.*?(?=\s|$)',
+        r'\s*exclusiva\s+pcd\s*-?\s*',
+    ]
+    
+    # Remove padrões afirmativos do texto original
+    texto_limpo = texto_completo
+    for padrao in padroes_afirmativos:
+        texto_limpo = re.sub(padrao, '', texto_limpo, flags=re.IGNORECASE)
+    
+    # Limpa espaços extras após remoção
+    texto_limpo = ' '.join(texto_limpo.split())
+    
+    # Procura por localizações conhecidas
     for local in LOCAIS_ALVO:
-        posicao = texto_lower.rfind(local.lower())
+        # Cria padrões mais específicos para encontrar a localização
+        padroes_local = [
+            rf'\b{re.escape(local)}\b\s*$',  # Local no final
+            rf'\s+{re.escape(local)}\b\s*$',  # Local no final com espaço
+            rf',\s*{re.escape(local)}\b\s*$',  # Local após vírgula no final
+        ]
         
-        if posicao != -1:
-            titulo = texto_completo[:posicao].strip()
-            if titulo.endswith(',') or titulo.endswith('-'):
-                titulo = titulo[:-1].strip()
+        for padrao in padroes_local:
+            match = re.search(padrao, texto_limpo, re.IGNORECASE)
+            if match:
+                # Extrai o título (tudo antes da localização)
+                titulo = texto_limpo[:match.start()].strip()
+                
+                # Remove vírgulas, hífens ou pipes no final do título
+                while titulo.endswith((',', '-', '|')):
+                    titulo = titulo[:-1].strip()
+                
+                return titulo, local
+    
+    # Se não encontrou localização conhecida, tenta o padrão de vírgula
+    if ',' in texto_limpo:
+        # Pega a última vírgula (mais provável de separar título de localização)
+        partes = texto_limpo.rsplit(',', 1)
+        if len(partes) == 2:
+            titulo_candidato = partes[0].strip()
+            localizacao_candidata = partes[1].strip()
             
-            localizacao = texto_completo[posicao:].strip()
-            return titulo, localizacao
+            # Verifica se a localização candidata é razoável
+            # (não muito longa e não contém caracteres especiais típicos de título)
+            if (len(localizacao_candidata.split()) <= 3 and 
+                len(localizacao_candidata) <= 50 and
+                not re.search(r'[()[\]{}]', localizacao_candidata)):
+                
+                return titulo_candidato, localizacao_candidata
+    
+    # Se ainda não encontrou, verifica se há alguma localização no meio do texto
+    for local in LOCAIS_ALVO:
+        if local.lower() in texto_limpo.lower():
+            # Encontra a posição e tenta extrair
+            match = re.search(rf'\b{re.escape(local)}\b', texto_limpo, re.IGNORECASE)
+            if match:
+                titulo = texto_limpo[:match.start()].strip()
+                while titulo.endswith((',', '-', '|')):
+                    titulo = titulo[:-1].strip()
+                return titulo, local
             
     return texto_completo, "Local não especificado"
 
@@ -40,11 +142,13 @@ def extrair_titulo_e_localizacao(texto_completo):
 def raspar():
     print("🚀 Iniciando scraping da CI&T...")
     vagas_encontradas = []
+    vagas_descartadas = []
+
 
     with sync_playwright() as p:
         browser = None
         try:
-            browser = p.chromium.launch(headless=True)
+            browser = p.chromium.launch(headless=False)
             context = browser.new_context(user_agent=USER_AGENT, locale='pt-BR')
             page = context.new_page()
             
@@ -88,16 +192,25 @@ def raspar():
             for item in vagas_items:
                 try:
                     texto_completo_vaga = item.locator('h2').inner_text()
+                    link_relativo = item.locator('a').get_attribute('href')
+                    url_vaga = f"{BASE_URL}{link_relativo}"
                     
                     # PASSO 1: CORREÇÃO PRINCIPAL MANTIDA
                     titulo, localizacao = extrair_titulo_e_localizacao(texto_completo_vaga)
 
-                    if localizacao == "Local não especificado":
+                    # Verificar se a localização está nos locais alvo
+                    if localizacao not in LOCAIS_ALVO:
+                        # Salvar vaga descartada para análise
+                        vaga_descartada = {
+                            "texto_original": texto_completo_vaga,
+                            "titulo": titulo,
+                            "localizacao": localizacao,
+                            "motivo": f"Localização '{localizacao}' não está em {LOCAIS_ALVO}",
+                            "url_vaga": url_vaga
+                        }
+                        vagas_descartadas.append(vaga_descartada)
                         continue
 
-                    link_relativo = item.locator('a').get_attribute('href')
-                    url_vaga = f"{BASE_URL}{link_relativo}"
-                    
                     # PASSO 4: REFATORAÇÃO DO MODELO DE TRABALHO MANTIDA
                     modelo_trabalho = "Nao informado"
                     try:
@@ -119,7 +232,9 @@ def raspar():
                 except Exception as e:
                     print(f"⚠️ Erro ao extrair dados de um item de vaga: {e}")
             
-            print(f"Scraping da CI&T finalizado. Total de vagas válidas para a região: {len(vagas_encontradas)}")
+            print(f"Scraping da CI&T finalizado.")
+            print(f"📊 Vagas válidas para a região: {len(vagas_encontradas)}")
+            print(f"🚫 Vagas descartadas: {len(vagas_descartadas)}")
 
         except TimeoutError as e:
             print(f"❌ Erro de Timeout: A página demorou muito para carregar ou um elemento não foi encontrado. {e}")
@@ -128,6 +243,9 @@ def raspar():
         finally:
             if browser and browser.is_connected():
                 browser.close()
+    
+    # Salvar arquivo TXT das vagas descartadas para verificação
+    salvar_vagas_descartadas(vagas_descartadas, "CI&T")
     
     return vagas_encontradas
 

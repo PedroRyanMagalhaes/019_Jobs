@@ -41,6 +41,7 @@ def main():
 
     print("\n==============================================")
     print("== PROCESSO FINALIZADO ==")
+    print("📄 Verifique a pasta 'data/' para arquivos de vagas descartadas!")
 
 
 if __name__ == "__main__":
