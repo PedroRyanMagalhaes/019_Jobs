@@ -1,0 +1,122 @@
+[
+  {
+    "url": "https://ciandt.com/br/pt-br/api/featured-insights-menu/article?tagmode=any&format=json",
+    "method": "GET",
+    "resource_type": "xhr"
+  },
+  {
+    "url": "https://ciandt.com/br/pt-br/api/featured-insights-menu/case_study?tagmode=any&format=json",
+    "method": "GET",
+    "resource_type": "xhr"
+  },
+  {
+    "url": "https://ciandt.com/br/pt-br/api/featured-insights-menu/ebook?tagmode=any&format=json",
+    "method": "GET",
+    "resource_type": "xhr"
+  },
+  {
+    "url": "https://ciandt.com/br/pt-br/api/featured-insights-menu/event?tagmode=any&format=json",
+    "method": "GET",
+    "resource_type": "xhr"
+  },
+  {
+    "url": "https://ciandt.com/br/pt-br/api/featured-insights-menu/podcast?tagmode=any&format=json",
+    "method": "GET",
+    "resource_type": "xhr"
+  },
+  {
+    "url": "https://ciandt.com/br/pt-br/api/featured-insights-menu/report?tagmode=any&format=json",
+    "method": "GET",
+    "resource_type": "xhr"
+  },
+  {
+    "url": "https://ciandt.com/br/pt-br/api/featured-insights-menu/webinar?tagmode=any&format=json",
+    "method": "GET",
+    "resource_type": "xhr"
+  },
+  {
+    "url": "https://ciandt.com/br/pt-br/api/featured-insights-menu/whitepaper?tagmode=any&format=json",
+    "method": "GET",
+    "resource_type": "xhr"
+  },
+  {
+    "url": "https://ciandt.com/br/pt-br/api/featured-insights-menu/article+case_study+ebook+event+podcast+report+webinar+whitepaper?tagmode=any&format=json",
+    "method": "GET",
+    "resource_type": "xhr"
+  },
+  {
+    "url": "https://api.hubspot.com/livechat-public/v1/message/public?portalId=47780097&conversations-embed=static-1.24059&mobile=false&messagesUtk=56c3dd73fe1b4de5afd9a4a843170488&traceId=56c3dd73fe1b4de5afd9a4a843170488",
+    "method": "GET",
+    "resource_type": "xhr"
+  },
+  {
+    "url": "https://forms.hscollectedforms.net/collected-forms/v1/config/json?portalId=47780097&utk=",
+    "method": "GET",
+    "resource_type": "xhr"
+  },
+  {
+    "url": "https://api.hubapi.com/hs-script-loader-public/v1/config/pixels-and-events/json?portalId=47780097",
+    "method": "GET",
+    "resource_type": "xhr"
+  },
+  {
+    "url": "https://b.6sc.co/v1/beacon/img.gif?token=e2366700158b98bd9d5d593a3cf7e2e7&svisitor=null&visitor=b6e57a36-6063-450e-8549-ae232c393318&session=690b93d6-79c8-4666-80fa-8ebcc98cd3f0&event=a_pageload&q=%7B%22pageLoadTime%22%3A%22Mon%2C%2006%20Oct%202025%2014%3A09%3A24%20GMT%22%7D&isIframe=false&m=%7B%22description%22%3A%22V%C3%A1rias%20coisas%20nos%20definem%20enquanto%20empresa%2C%20mas%20apenas%20uma%20nos%20diferencia%3A%20as%20nossas%20pessoas.%20Somos%20um%20grupo%20que%20resolve%20desafios%20com%20vis%C3%A3o%20de%20futuro%2C%20curiosidade%20e%20criatividade%2C%20com%20paix%C3%A3o%20por%20causar%20impacto%20nas%20marcas%20mais%20valiosas%20do%20mundo.%22%2C%22keywords%22%3A%22%22%2C%22title%22%3A%22Nossas%20oportunidades%20%7C%20CI%26amp%3BT%22%7D&cb=&r=&thirdParty=%7B%7D&v2=1&pageURL=https%3A%2F%2Fciandt.com%2Fbr%2Fpt-br%2Fcarreiras%2Foportunidades&pageViewId=fe042a29-ba7a-4448-87e2-104ee8fcf287&d=1&webTagId=4cc90e95-fcc8-4405-bb42-d5005af1010e&v=1.1.31",
+    "method": "GET",
+    "resource_type": "image"
+  },
+  {
+    "url": "https://b.6sc.co/v1/beacon/img.gif?token=e2366700158b98bd9d5d593a3cf7e2e7&svisitor=null&visitor=b6e57a36-6063-450e-8549-ae232c393318&session=690b93d6-79c8-4666-80fa-8ebcc98cd3f0&event=ni%3AasyncSettingsAudit&q=%7B%22settings%22%3A%22%5B%7B%5C%22name%5C%22%3A%5C%22setToken%5C%22%2C%5C%22value%5C%22%3A%5C%22e2366700158b98bd9d5d593a3cf7e2e7%5C%22%2C%5C%22dateTime%5C%22%3A%5C%22Mon%2C%2006%20Oct%202025%2014%3A09%3A24%20GMT%5C%22%2C%5C%22timeSincePageLoad%5C%22%3A%5C%220%5C%22%7D%2C%7B%5C%22name%5C%22%3A%5C%22disableCookies%5C%22%2C%5C%22value%5C%22%3A%5C%22true%5C%22%2C%5C%22dateTime%5C%22%3A%5C%22Mon%2C%2006%20Oct%202025%2014%3A09%3A24%20GMT%5C%22%2C%5C%22timeSincePageLoad%5C%22%3A%5C%220%5C%22%7D%2C%7B%5C%22name%5C%22%3A%5C%22enableIPv6Ping%5C%22%2C%5C%22value%5C%22%3A%5C%22true%5C%22%2C%5C%22dateTime%5C%22%3A%5C%22Mon%2C%2006%20Oct%202025%2014%3A09%3A24%20GMT%5C%22%2C%5C%22timeSincePageLoad%5C%22%3A%5C%220%5C%22%7D%2C%7B%5C%22name%5C%22%3A%5C%22enableIgnorePageUrlHash%5C%22%2C%5C%22value%5C%22%3A%5C%22true%5C%22%2C%5C%22dateTime%5C%22%3A%5C%22Mon%2C%2006%20Oct%202025%2014%3A09%3A24%20GMT%5C%22%2C%5C%22timeSincePageLoad%5C%22%3A%5C%220%5C%22%7D%2C%7B%5C%22name%5C%22%3A%5C%22enableRetargeting%5C%22%2C%5C%22value%5C%22%3A%5C%22true%5C%22%2C%5C%22dateTime%5C%22%3A%5C%22Mon%2C%2006%20Oct%202025%2014%3A09%3A24%20GMT%5C%22%2C%5C%22timeSincePageLoad%5C%22%3A%5C%220%5C%22%7D%2C%7B%5C%22name%5C%22%3A%5C%22setWhiteListFields%5C%22%2C%5C%22value%5C%22%3A%5C%22%5B%5D%5C%22%2C%5C%22dateTime%5C%22%3A%5C%22Mon%2C%2006%20Oct%202025%2014%3A09%3A24%20GMT%5C%22%2C%5C%22timeSincePageLoad%5C%22%3A%5C%220%5C%22%7D%2C%7B%5C%22name%5C%22%3A%5C%22setCustomMetatags%5C%22%2C%5C%22value%5C%22%3A%5C%22%5B%5D%5C%22%2C%5C%22dateTime%5C%22%3A%5C%22Mon%2C%2006%20Oct%202025%2014%3A09%3A24%20GMT%5C%22%2C%5C%22timeSincePageLoad%5C%22%3A%5C%220%5C%22%7D%2C%7B%5C%22name%5C%22%3A%5C%22storeTagId%5C%22%2C%5C%22value%5C%22%3A%5C%224cc90e95-fcc8-4405-bb42-d5005af1010e%5C%22%2C%5C%22dateTime%5C%22%3A%5C%22Mon%2C%2006%20Oct%202025%2014%3A09%3A24%20GMT%5C%22%2C%5C%22timeSincePageLoad%5C%22%3A%5C%220%5C%22%7D%2C%7B%5C%22name%5C%22%3A%5C%22enableEventTracking%5C%22%2C%5C%22value%5C%22%3A%5C%22true%5C%22%2C%5C%22dateTime%5C%22%3A%5C%22Mon%2C%2006%20Oct%202025%2014%3A09%3A24%20GMT%5C%22%2C%5C%22timeSincePageLoad%5C%22%3A%5C%220%5C%22%7D%2C%7B%5C%22name%5C%22%3A%5C%22setCompanyDetailsExpiration%5C%22%2C%5C%22value%5C%22%3A%5C%22false%5C%22%2C%5C%22dateTime%5C%22%3A%5C%22Mon%2C%2006%20Oct%202025%2014%3A09%3A24%20GMT%5C%22%2C%5C%22timeSincePageLoad%5C%22%3A%5C%220%5C%22%7D%2C%7B%5C%22name%5C%22%3A%5C%22enableMapCookieCapture%5C%22%2C%5C%22value%5C%22%3A%5C%22false%5C%22%2C%5C%22dateTime%5C%22%3A%5C%22Mon%2C%2006%20Oct%202025%2014%3A09%3A24%20GMT%5C%22%2C%5C%22timeSincePageLoad%5C%22%3A%5C%220%5C%22%7D%2C%7B%5C%22name%5C%22%3A%5C%22enableTimeTracking%5C%22%2C%5C%22value%5C%22%3A%5C%22true%5C%22%2C%5C%22dateTime%5C%22%3A%5C%22Mon%2C%2006%20Oct%202025%2014%3A09%3A24%20GMT%5C%22%2C%5C%22timeSincePageLoad%5C%22%3A%5C%220%5C%22%7D%2C%7B%5C%22name%5C%22%3A%5C%22enableCompanyDetails%5C%22%2C%5C%22value%5C%22%3A%5C%22false%5C%22%2C%5C%22dateTime%5C%22%3A%5C%22Mon%2C%2006%20Oct%202025%2014%3A09%3A24%20GMT%5C%22%2C%5C%22timeSincePageLoad%5C%22%3A%5C%220%5C%22%7D%5D%22%7D&isIframe=false&m=%7B%22description%22%3A%22V%C3%A1rias%20coisas%20nos%20definem%20enquanto%20empresa%2C%20mas%20apenas%20uma%20nos%20diferencia%3A%20as%20nossas%20pessoas.%20Somos%20um%20grupo%20que%20resolve%20desafios%20com%20vis%C3%A3o%20de%20futuro%2C%20curiosidade%20e%20criatividade%2C%20com%20paix%C3%A3o%20por%20causar%20impacto%20nas%20marcas%20mais%20valiosas%20do%20mundo.%22%2C%22keywords%22%3A%22%22%2C%22title%22%3A%22Nossas%20oportunidades%20%7C%20CI%26amp%3BT%22%7D&cb=&r=&thirdParty=%7B%7D&v2=1&pageURL=https%3A%2F%2Fciandt.com%2Fbr%2Fpt-br%2Fcarreiras%2Foportunidades&pageViewId=fe042a29-ba7a-4448-87e2-104ee8fcf287&d=1&webTagId=4cc90e95-fcc8-4405-bb42-d5005af1010e&v=1.1.31",
+    "method": "GET",
+    "resource_type": "image"
+  },
+  {
+    "url": "https://b.6sc.co/v1/beacon/img.gif?token=e2366700158b98bd9d5d593a3cf7e2e7&svisitor=null&visitor=b6e57a36-6063-450e-8549-ae232c393318&session=690b93d6-79c8-4666-80fa-8ebcc98cd3f0&event=active_time_track&q=%7B%22currentTime%22%3A%22Mon%2C%2006%20Oct%202025%2014%3A09%3A25%20GMT%22%2C%22lastTrackTime%22%3A%22Mon%2C%2006%20Oct%202025%2014%3A09%3A24%20GMT%22%2C%22timeSpent%22%3A%221006%22%2C%22totalTimeSpent%22%3A%221006%22%7D&isIframe=false&m=%7B%22description%22%3A%22V%C3%A1rias%20coisas%20nos%20definem%20enquanto%20empresa%2C%20mas%20apenas%20uma%20nos%20diferencia%3A%20as%20nossas%20pessoas.%20Somos%20um%20grupo%20que%20resolve%20desafios%20com%20vis%C3%A3o%20de%20futuro%2C%20curiosidade%20e%20criatividade%2C%20com%20paix%C3%A3o%20por%20causar%20impacto%20nas%20marcas%20mais%20valiosas%20do%20mundo.%22%2C%22keywords%22%3A%22%22%2C%22title%22%3A%22Nossas%20oportunidades%20%7C%20CI%26amp%3BT%22%7D&cb=&r=&thirdParty=%7B%7D&v2=1&pageURL=https%3A%2F%2Fciandt.com%2Fbr%2Fpt-br%2Fcarreiras%2Foportunidades&pageViewId=fe042a29-ba7a-4448-87e2-104ee8fcf287&d=1&an_uid=0&webTagId=4cc90e95-fcc8-4405-bb42-d5005af1010e&v=1.1.31",
+    "method": "GET",
+    "resource_type": "image"
+  },
+  {
+    "url": "https://b.6sc.co/v1/beacon/img.gif?token=e2366700158b98bd9d5d593a3cf7e2e7&svisitor=null&visitor=b6e57a36-6063-450e-8549-ae232c393318&session=690b93d6-79c8-4666-80fa-8ebcc98cd3f0&event=active_time_track&q=%7B%22currentTime%22%3A%22Mon%2C%2006%20Oct%202025%2014%3A09%3A26%20GMT%22%2C%22lastTrackTime%22%3A%22Mon%2C%2006%20Oct%202025%2014%3A09%3A25%20GMT%22%2C%22timeSpent%22%3A%221009%22%2C%22totalTimeSpent%22%3A%222015%22%7D&isIframe=false&m=%7B%22description%22%3A%22V%C3%A1rias%20coisas%20nos%20definem%20enquanto%20empresa%2C%20mas%20apenas%20uma%20nos%20diferencia%3A%20as%20nossas%20pessoas.%20Somos%20um%20grupo%20que%20resolve%20desafios%20com%20vis%C3%A3o%20de%20futuro%2C%20curiosidade%20e%20criatividade%2C%20com%20paix%C3%A3o%20por%20causar%20impacto%20nas%20marcas%20mais%20valiosas%20do%20mundo.%22%2C%22keywords%22%3A%22%22%2C%22title%22%3A%22Nossas%20oportunidades%20%7C%20CI%26amp%3BT%22%7D&cb=&r=&thirdParty=%7B%7D&v2=1&pageURL=https%3A%2F%2Fciandt.com%2Fbr%2Fpt-br%2Fcarreiras%2Foportunidades&pageViewId=fe042a29-ba7a-4448-87e2-104ee8fcf287&d=1&an_uid=0&webTagId=4cc90e95-fcc8-4405-bb42-d5005af1010e&v=1.1.31",
+    "method": "GET",
+    "resource_type": "image"
+  },
+  {
+    "url": "https://b.6sc.co/v1/beacon/img.gif?token=e2366700158b98bd9d5d593a3cf7e2e7&svisitor=null&visitor=b6e57a36-6063-450e-8549-ae232c393318&session=690b93d6-79c8-4666-80fa-8ebcc98cd3f0&event=active_time_track&q=%7B%22currentTime%22%3A%22Mon%2C%2006%20Oct%202025%2014%3A09%3A27%20GMT%22%2C%22lastTrackTime%22%3A%22Mon%2C%2006%20Oct%202025%2014%3A09%3A26%20GMT%22%2C%22timeSpent%22%3A%221006%22%2C%22totalTimeSpent%22%3A%223021%22%7D&isIframe=false&m=%7B%22description%22%3A%22V%C3%A1rias%20coisas%20nos%20definem%20enquanto%20empresa%2C%20mas%20apenas%20uma%20nos%20diferencia%3A%20as%20nossas%20pessoas.%20Somos%20um%20grupo%20que%20resolve%20desafios%20com%20vis%C3%A3o%20de%20futuro%2C%20curiosidade%20e%20criatividade%2C%20com%20paix%C3%A3o%20por%20causar%20impacto%20nas%20marcas%20mais%20valiosas%20do%20mundo.%22%2C%22keywords%22%3A%22%22%2C%22title%22%3A%22Nossas%20oportunidades%20%7C%20CI%26amp%3BT%22%7D&cb=&r=&thirdParty=%7B%7D&v2=1&pageURL=https%3A%2F%2Fciandt.com%2Fbr%2Fpt-br%2Fcarreiras%2Foportunidades&pageViewId=fe042a29-ba7a-4448-87e2-104ee8fcf287&d=1&an_uid=0&webTagId=4cc90e95-fcc8-4405-bb42-d5005af1010e&v=1.1.31",
+    "method": "GET",
+    "resource_type": "image"
+  },
+  {
+    "url": "https://b.6sc.co/v1/beacon/img.gif?token=e2366700158b98bd9d5d593a3cf7e2e7&svisitor=null&visitor=b6e57a36-6063-450e-8549-ae232c393318&session=690b93d6-79c8-4666-80fa-8ebcc98cd3f0&event=active_time_track&q=%7B%22currentTime%22%3A%22Mon%2C%2006%20Oct%202025%2014%3A09%3A28%20GMT%22%2C%22lastTrackTime%22%3A%22Mon%2C%2006%20Oct%202025%2014%3A09%3A27%20GMT%22%2C%22timeSpent%22%3A%221001%22%2C%22totalTimeSpent%22%3A%224022%22%7D&isIframe=false&m=%7B%22description%22%3A%22V%C3%A1rias%20coisas%20nos%20definem%20enquanto%20empresa%2C%20mas%20apenas%20uma%20nos%20diferencia%3A%20as%20nossas%20pessoas.%20Somos%20um%20grupo%20que%20resolve%20desafios%20com%20vis%C3%A3o%20de%20futuro%2C%20curiosidade%20e%20criatividade%2C%20com%20paix%C3%A3o%20por%20causar%20impacto%20nas%20marcas%20mais%20valiosas%20do%20mundo.%22%2C%22keywords%22%3A%22%22%2C%22title%22%3A%22Nossas%20oportunidades%20%7C%20CI%26amp%3BT%22%7D&cb=&r=&thirdParty=%7B%7D&v2=1&pageURL=https%3A%2F%2Fciandt.com%2Fbr%2Fpt-br%2Fcarreiras%2Foportunidades&pageViewId=fe042a29-ba7a-4448-87e2-104ee8fcf287&d=1&an_uid=0&webTagId=4cc90e95-fcc8-4405-bb42-d5005af1010e&v=1.1.31",
+    "method": "GET",
+    "resource_type": "image"
+  },
+  {
+    "url": "https://b.6sc.co/v1/beacon/img.gif?token=e2366700158b98bd9d5d593a3cf7e2e7&svisitor=null&visitor=b6e57a36-6063-450e-8549-ae232c393318&session=690b93d6-79c8-4666-80fa-8ebcc98cd3f0&event=active_time_track&q=%7B%22currentTime%22%3A%22Mon%2C%2006%20Oct%202025%2014%3A09%3A29%20GMT%22%2C%22lastTrackTime%22%3A%22Mon%2C%2006%20Oct%202025%2014%3A09%3A28%20GMT%22%2C%22timeSpent%22%3A%221008%22%2C%22totalTimeSpent%22%3A%225030%22%7D&isIframe=false&m=%7B%22description%22%3A%22V%C3%A1rias%20coisas%20nos%20definem%20enquanto%20empresa%2C%20mas%20apenas%20uma%20nos%20diferencia%3A%20as%20nossas%20pessoas.%20Somos%20um%20grupo%20que%20resolve%20desafios%20com%20vis%C3%A3o%20de%20futuro%2C%20curiosidade%20e%20criatividade%2C%20com%20paix%C3%A3o%20por%20causar%20impacto%20nas%20marcas%20mais%20valiosas%20do%20mundo.%22%2C%22keywords%22%3A%22%22%2C%22title%22%3A%22Nossas%20oportunidades%20%7C%20CI%26amp%3BT%22%7D&cb=&r=&thirdParty=%7B%7D&v2=1&pageURL=https%3A%2F%2Fciandt.com%2Fbr%2Fpt-br%2Fcarreiras%2Foportunidades&pageViewId=fe042a29-ba7a-4448-87e2-104ee8fcf287&d=1&an_uid=0&webTagId=4cc90e95-fcc8-4405-bb42-d5005af1010e&v=1.1.31",
+    "method": "GET",
+    "resource_type": "image"
+  },
+  {
+    "url": "https://b.6sc.co/v1/beacon/img.gif?token=e2366700158b98bd9d5d593a3cf7e2e7&svisitor=null&visitor=b6e57a36-6063-450e-8549-ae232c393318&session=690b93d6-79c8-4666-80fa-8ebcc98cd3f0&event=active_time_track&q=%7B%22currentTime%22%3A%22Mon%2C%2006%20Oct%202025%2014%3A09%3A30%20GMT%22%2C%22lastTrackTime%22%3A%22Mon%2C%2006%20Oct%202025%2014%3A09%3A29%20GMT%22%2C%22timeSpent%22%3A%221001%22%2C%22totalTimeSpent%22%3A%226031%22%7D&isIframe=false&m=%7B%22description%22%3A%22V%C3%A1rias%20coisas%20nos%20definem%20enquanto%20empresa%2C%20mas%20apenas%20uma%20nos%20diferencia%3A%20as%20nossas%20pessoas.%20Somos%20um%20grupo%20que%20resolve%20desafios%20com%20vis%C3%A3o%20de%20futuro%2C%20curiosidade%20e%20criatividade%2C%20com%20paix%C3%A3o%20por%20causar%20impacto%20nas%20marcas%20mais%20valiosas%20do%20mundo.%22%2C%22keywords%22%3A%22%22%2C%22title%22%3A%22Nossas%20oportunidades%20%7C%20CI%26amp%3BT%22%7D&cb=&r=&thirdParty=%7B%7D&v2=1&pageURL=https%3A%2F%2Fciandt.com%2Fbr%2Fpt-br%2Fcarreiras%2Foportunidades&pageViewId=fe042a29-ba7a-4448-87e2-104ee8fcf287&d=1&an_uid=0&webTagId=4cc90e95-fcc8-4405-bb42-d5005af1010e&v=1.1.31",
+    "method": "GET",
+    "resource_type": "image"
+  },
+  {
+    "url": "https://b.6sc.co/v1/beacon/img.gif?token=e2366700158b98bd9d5d593a3cf7e2e7&svisitor=null&visitor=b6e57a36-6063-450e-8549-ae232c393318&session=690b93d6-79c8-4666-80fa-8ebcc98cd3f0&event=active_time_track&q=%7B%22currentTime%22%3A%22Mon%2C%2006%20Oct%202025%2014%3A09%3A31%20GMT%22%2C%22lastTrackTime%22%3A%22Mon%2C%2006%20Oct%202025%2014%3A09%3A30%20GMT%22%2C%22timeSpent%22%3A%221004%22%2C%22totalTimeSpent%22%3A%227035%22%7D&isIframe=false&m=%7B%22description%22%3A%22V%C3%A1rias%20coisas%20nos%20definem%20enquanto%20empresa%2C%20mas%20apenas%20uma%20nos%20diferencia%3A%20as%20nossas%20pessoas.%20Somos%20um%20grupo%20que%20resolve%20desafios%20com%20vis%C3%A3o%20de%20futuro%2C%20curiosidade%20e%20criatividade%2C%20com%20paix%C3%A3o%20por%20causar%20impacto%20nas%20marcas%20mais%20valiosas%20do%20mundo.%22%2C%22keywords%22%3A%22%22%2C%22title%22%3A%22Nossas%20oportunidades%20%7C%20CI%26amp%3BT%22%7D&cb=&r=&thirdParty=%7B%7D&v2=1&pageURL=https%3A%2F%2Fciandt.com%2Fbr%2Fpt-br%2Fcarreiras%2Foportunidades&pageViewId=fe042a29-ba7a-4448-87e2-104ee8fcf287&d=1&an_uid=0&webTagId=4cc90e95-fcc8-4405-bb42-d5005af1010e&v=1.1.31",
+    "method": "GET",
+    "resource_type": "image"
+  },
+  {
+    "url": "https://b.6sc.co/v1/beacon/img.gif?token=e2366700158b98bd9d5d593a3cf7e2e7&svisitor=null&visitor=b6e57a36-6063-450e-8549-ae232c393318&session=690b93d6-79c8-4666-80fa-8ebcc98cd3f0&event=active_time_track&q=%7B%22currentTime%22%3A%22Mon%2C%2006%20Oct%202025%2014%3A09%3A32%20GMT%22%2C%22lastTrackTime%22%3A%22Mon%2C%2006%20Oct%202025%2014%3A09%3A31%20GMT%22%2C%22timeSpent%22%3A%221007%22%2C%22totalTimeSpent%22%3A%228042%22%7D&isIframe=false&m=%7B%22description%22%3A%22V%C3%A1rias%20coisas%20nos%20definem%20enquanto%20empresa%2C%20mas%20apenas%20uma%20nos%20diferencia%3A%20as%20nossas%20pessoas.%20Somos%20um%20grupo%20que%20resolve%20desafios%20com%20vis%C3%A3o%20de%20futuro%2C%20curiosidade%20e%20criatividade%2C%20com%20paix%C3%A3o%20por%20causar%20impacto%20nas%20marcas%20mais%20valiosas%20do%20mundo.%22%2C%22keywords%22%3A%22%22%2C%22title%22%3A%22Nossas%20oportunidades%20%7C%20CI%26amp%3BT%22%7D&cb=&r=&thirdParty=%7B%7D&v2=1&pageURL=https%3A%2F%2Fciandt.com%2Fbr%2Fpt-br%2Fcarreiras%2Foportunidades&pageViewId=fe042a29-ba7a-4448-87e2-104ee8fcf287&d=1&an_uid=0&webTagId=4cc90e95-fcc8-4405-bb42-d5005af1010e&v=1.1.31",
+    "method": "GET",
+    "resource_type": "image"
+  },
+  {
+    "url": "https://b.6sc.co/v1/beacon/img.gif?token=e2366700158b98bd9d5d593a3cf7e2e7&svisitor=null&visitor=b6e57a36-6063-450e-8549-ae232c393318&session=690b93d6-79c8-4666-80fa-8ebcc98cd3f0&event=active_time_track&q=%7B%22currentTime%22%3A%22Mon%2C%2006%20Oct%202025%2014%3A09%3A33%20GMT%22%2C%22lastTrackTime%22%3A%22Mon%2C%2006%20Oct%202025%2014%3A09%3A32%20GMT%22%2C%22timeSpent%22%3A%221008%22%2C%22totalTimeSpent%22%3A%229050%22%7D&isIframe=false&m=%7B%22description%22%3A%22V%C3%A1rias%20coisas%20nos%20definem%20enquanto%20empresa%2C%20mas%20apenas%20uma%20nos%20diferencia%3A%20as%20nossas%20pessoas.%20Somos%20um%20grupo%20que%20resolve%20desafios%20com%20vis%C3%A3o%20de%20futuro%2C%20curiosidade%20e%20criatividade%2C%20com%20paix%C3%A3o%20por%20causar%20impacto%20nas%20marcas%20mais%20valiosas%20do%20mundo.%22%2C%22keywords%22%3A%22%22%2C%22title%22%3A%22Nossas%20oportunidades%20%7C%20CI%26amp%3BT%22%7D&cb=&r=&thirdParty=%7B%7D&v2=1&pageURL=https%3A%2F%2Fciandt.com%2Fbr%2Fpt-br%2Fcarreiras%2Foportunidades&pageViewId=fe042a29-ba7a-4448-87e2-104ee8fcf287&d=1&an_uid=0&webTagId=4cc90e95-fcc8-4405-bb42-d5005af1010e&v=1.1.31",
+    "method": "GET",
+    "resource_type": "image"
+  },
+  {
+    "url": "https://b.6sc.co/v1/beacon/img.gif?token=e2366700158b98bd9d5d593a3cf7e2e7&svisitor=null&visitor=b6e57a36-6063-450e-8549-ae232c393318&session=690b93d6-79c8-4666-80fa-8ebcc98cd3f0&event=active_time_track&q=%7B%22currentTime%22%3A%22Mon%2C%2006%20Oct%202025%2014%3A09%3A34%20GMT%22%2C%22lastTrackTime%22%3A%22Mon%2C%2006%20Oct%202025%2014%3A09%3A33%20GMT%22%2C%22timeSpent%22%3A%221008%22%2C%22totalTimeSpent%22%3A%2210058%22%7D&isIframe=false&m=%7B%22description%22%3A%22V%C3%A1rias%20coisas%20nos%20definem%20enquanto%20empresa%2C%20mas%20apenas%20uma%20nos%20diferencia%3A%20as%20nossas%20pessoas.%20Somos%20um%20grupo%20que%20resolve%20desafios%20com%20vis%C3%A3o%20de%20futuro%2C%20curiosidade%20e%20criatividade%2C%20com%20paix%C3%A3o%20por%20causar%20impacto%20nas%20marcas%20mais%20valiosas%20do%20mundo.%22%2C%22keywords%22%3A%22%22%2C%22title%22%3A%22Nossas%20oportunidades%20%7C%20CI%26amp%3BT%22%7D&cb=&r=&thirdParty=%7B%7D&v2=1&pageURL=https%3A%2F%2Fciandt.com%2Fbr%2Fpt-br%2Fcarreiras%2Foportunidades&pageViewId=fe042a29-ba7a-4448-87e2-104ee8fcf287&d=1&an_uid=0&webTagId=4cc90e95-fcc8-4405-bb42-d5005af1010e&v=1.1.31",
+    "method": "GET",
+    "resource_type": "image"
+  }
+]
