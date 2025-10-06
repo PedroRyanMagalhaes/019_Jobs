@@ -1,10 +1,11 @@
 from src.database import database
 from src.scrapers import ciandt
+from src.scrapers import Bosch
 from config.settings import SCRAPERS_ATIVOS
 
 # Mapeamento de nomes para módulos
 SCRAPERS_MAP = {
-    "ciandt": ciandt
+    "Bosch": Bosch
 }
 
 # Criar lista de scrapers a partir das configurações
@@ -41,7 +42,6 @@ def main():
 
     print("\n==============================================")
     print("== PROCESSO FINALIZADO ==")
-    print("📄 Verifique a pasta 'data/' para arquivos de vagas descartadas!")
 
 
 if __name__ == "__main__":
