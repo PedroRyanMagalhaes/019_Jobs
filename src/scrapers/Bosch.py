@@ -90,3 +90,37 @@ def raspar():
             print("Scraper da Bosch finalizado.")
 
     return vagas_encontradas
+
+# --- BLOCO DE TESTE COMPLETO COM BANCO DE DADOS DEDICADO ---
+if __name__ == "__main__":
+    # Importa o módulo de banco de dados
+    from src.database import database
+    import os
+
+    os.makedirs("data", exist_ok=True) 
+    # Define o nome do banco de dados de teste
+    TEST_DB_FILE = "data/vagasteste.db"
+    
+    # Monkey Patch: Altera a variável DB_FILE do módulo database APENAS para esta execução
+    database.DB_FILE = TEST_DB_FILE
+    
+    print(f"--- EXECUTANDO SCRAPER DA BOSCH EM MODO DE TESTE COMPLETO ---")
+    print(f"--- Os resultados serão salvos em '{TEST_DB_FILE}' ---")
+    
+    # 1. Inicializa o banco de dados de teste
+    database.inicializar_banco()
+    
+    # 2. Executa o scraper para coletar as vagas
+    vagas_coletadas = raspar()
+    
+    # 3. Processa e salva as vagas no banco de teste
+    if vagas_coletadas:
+        print(f"\n✅ SUCESSO! {len(vagas_coletadas)} vagas da Bosch encontradas.")
+        novas_vagas_salvas = 0
+        for vaga in vagas_coletadas:
+            # A função salvar_vaga agora usará o TEST_DB_FILE
+            if database.salvar_vaga(vaga):
+                novas_vagas_salvas += 1
+        print(f"\nResumo do Teste Bosch: {novas_vagas_salvas} novas vagas foram salvas em '{TEST_DB_FILE}'.")
+    else:
+        print("\n❌ Nenhuma vaga da Bosch foi encontrada no teste.")

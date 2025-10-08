@@ -1,11 +1,13 @@
 from src.database import database
 from src.scrapers import ciandt
 from src.scrapers import Bosch
+from src.scrapers import cpfl
 from config.settings import SCRAPERS_ATIVOS
 
 # Mapeamento de nomes para módulos
 SCRAPERS_MAP = {
-    "Bosch": Bosch
+    "Bosch": Bosch,
+    "CPFL": cpfl
 }
 
 # Criar lista de scrapers a partir das configurações

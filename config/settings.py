@@ -10,7 +10,7 @@ DATABASE_CONFIG = {
 SCRAPER_CONFIG = {
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chromium/118.0.0.0 Chrome/118.0.0.0 Safari/537.36",
     "timeout": 60000,
-    "headless": False,
+    "headless": True,
     "delay_min": 0.5,
     "delay_max": 1.5
 }
@@ -18,10 +18,12 @@ SCRAPER_CONFIG = {
 
 # URLs das empresas
 EMPRESA_URLS = {
-    "Bosch": "https://careers.smartrecruiters.com/BoschGroup/brazil"
+    "Bosch": "https://careers.smartrecruiters.com/BoschGroup/brazil",
+    "CPFL": "https://vagas.cpfl.com.br/search"
 }
 
 # Lista de scrapers ativos
 SCRAPERS_ATIVOS = [
-    ("Bosch", "Bosch")
+    ("Bosch", "Bosch"),
+    ("CPFL", "CPFL")
 ]
