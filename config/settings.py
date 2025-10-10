@@ -2,8 +2,8 @@
 
 # Configurações do banco de dados
 DATABASE_CONFIG = {
-    "db_file": "database/vagas.db",
-    "backup_dir": "database/backups/"
+    "db_file": "src/database/vagas.db",
+    "backup_dir": "src/database/backups/"
 }
 
 # Configurações dos scrapers
@@ -19,11 +19,13 @@ SCRAPER_CONFIG = {
 # URLs das empresas
 EMPRESA_URLS = {
     "Bosch": "https://careers.smartrecruiters.com/BoschGroup/brazil",
-    "CPFL": "https://vagas.cpfl.com.br/search"
+    "CPFL": "https://vagas.cpfl.com.br/search",
+    "CI&T": "https://ciandt.com/br/pt-br/carreiras/oportunidades"
 }
 
 # Lista de scrapers ativos
 SCRAPERS_ATIVOS = [
     ("Bosch", "Bosch"),
-    ("CPFL", "CPFL")
+    ("CPFL", "CPFL"),
+    ("CI&T", "CI&T")
 ]

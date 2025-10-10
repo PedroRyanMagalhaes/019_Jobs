@@ -7,7 +7,8 @@ from config.settings import SCRAPERS_ATIVOS
 # Mapeamento de nomes para módulos
 SCRAPERS_MAP = {
     "Bosch": Bosch,
-    "CPFL": cpfl
+    "CPFL": cpfl,
+    "CI&T": ciandt
 }
 
 # Criar lista de scrapers a partir das configurações

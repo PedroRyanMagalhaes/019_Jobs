@@ -1,3 +1,10 @@
+#TODO: NÂO TA INDO PARA OUTRA PAGINA DAS VAGAS
+
+
+
+
+
+
 import time
 from playwright.sync_api import sync_playwright, TimeoutError
 from bs4 import BeautifulSoup
@@ -112,15 +119,14 @@ if __name__ == "__main__":
     
     print(f"--- EXECUTANDO SCRAPER DA CPFL EM MODO DE TESTE (PRODUÇÃO) ---")
 
-#TODO: NÂO TA INDO PARA OUTRA PAGINA DAS VAGAS
 
 # --- BLOCO DE TESTE ---
 if __name__ == "__main__":
     from src.database import database
     import os
 
-    os.makedirs("database", exist_ok=True)
-    TEST_DB_FILE = "database/vagasteste.db"
+    os.makedirs("src/database", exist_ok=True)
+    TEST_DB_FILE = "src/database/vagasteste.db"
     database.DB_FILE = TEST_DB_FILE
     
     print(f"--- EXECUTANDO SCRAPER DA CPFL EM MODO DE TESTE (PRODUÇÃO) ---")

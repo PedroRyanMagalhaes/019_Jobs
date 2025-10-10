@@ -62,6 +62,7 @@ venv.bak/
 *.db
 *.sqlite
 *.sqlite3
+data/ciandt_cookies.json
 
 # Logs
 *.log
