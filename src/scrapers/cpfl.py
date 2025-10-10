@@ -119,8 +119,8 @@ if __name__ == "__main__":
     from src.database import database
     import os
 
-    os.makedirs("data", exist_ok=True)
-    TEST_DB_FILE = "data/vagasteste.db"
+    os.makedirs("database", exist_ok=True)
+    TEST_DB_FILE = "database/vagasteste.db"
     database.DB_FILE = TEST_DB_FILE
     
     print(f"--- EXECUTANDO SCRAPER DA CPFL EM MODO DE TESTE (PRODUÇÃO) ---")

@@ -97,9 +97,9 @@ if __name__ == "__main__":
     from src.database import database
     import os
 
-    os.makedirs("data", exist_ok=True) 
+    os.makedirs("database", exist_ok=True) 
     # Define o nome do banco de dados de teste
-    TEST_DB_FILE = "data/vagasteste.db"
+    TEST_DB_FILE = "database/vagasteste.db"
     
     # Monkey Patch: Altera a variável DB_FILE do módulo database APENAS para esta execução
     database.DB_FILE = TEST_DB_FILE

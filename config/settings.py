@@ -2,8 +2,8 @@
 
 # Configurações do banco de dados
 DATABASE_CONFIG = {
-    "db_file": "data/vagas.db",
-    "backup_dir": "data/backups/"
+    "db_file": "database/vagas.db",
+    "backup_dir": "database/backups/"
 }
 
 # Configurações dos scrapers
