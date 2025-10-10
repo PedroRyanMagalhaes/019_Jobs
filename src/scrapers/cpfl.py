@@ -1,13 +1,12 @@
 import time
 from playwright.sync_api import sync_playwright, TimeoutError
+from bs4 import BeautifulSoup
 from config.settings import EMPRESA_URLS, SCRAPER_CONFIG
+import os
 
 def raspar():
     """
-    Realiza o scraping de TODAS as vagas da CPFL e depois filtra por Campinas.
-    - Navega por todas as páginas de resultados.
-    - Extrai título, URL e localização de cada vaga.
-    - Filtra a lista final em Python para manter apenas vagas de Campinas.
+    VERSÃO DE PRODUÇÃO: Usa a estratégia com BeautifulSoup e paginação por número de página.
     """
     
     url = EMPRESA_URLS.get("CPFL")
@@ -18,7 +17,7 @@ def raspar():
     vagas_encontradas = []
     base_url = "https://vagas.cpfl.com.br"
 
-    print(f"Iniciando scraper para a CPFL em {url}")
+    print(f"Iniciando scraper para a CPFL em {url} (MODO DE PRODUÇÃO)")
 
     with sync_playwright() as p:
         browser = p.chromium.launch(
@@ -29,71 +28,80 @@ def raspar():
         
         try:
             page.goto(url, timeout=SCRAPER_CONFIG.get("timeout", 60000))
-            
-            print("✅ Página inicial carregada. Iniciando coleta de todas as vagas.")
+            print("Aguardando a página carregar completamente (networkidle)...")
+            page.wait_for_load_state('networkidle', timeout=20000)
+            print("✅ Página inicial carregada.")
 
+            page_num = 1
             while True:
-                print("Coletando informações da página atual...")
-                page.wait_for_selector('table#searchresults', state='visible', timeout=10000)
-                
-                vagas_na_pagina = page.locator('tr.data-row').all()
-                print(f"Encontrados {len(vagas_na_pagina)} elementos de vagas na página.")
-                
-                if not vagas_na_pagina:
-                    print("Nenhuma vaga encontrada na página. Encerrando coleta.")
+                print(f"--- Processando Página {page_num} ---")
+
+                tabela_html = page.locator('table#searchresults > tbody').inner_html()
+                soup = BeautifulSoup(tabela_html, 'html.parser')
+                vagas_tr = soup.find_all('tr', class_='data-row')
+                print(f"Encontrados {len(vagas_tr)} vagas na página {page_num}.")
+
+                if not vagas_tr:
+                    print("Nenhuma vaga encontrada na página, encerrando.")
                     break
 
-                for vaga_tr in vagas_na_pagina:
-                    link_element = vaga_tr.locator('a.jobTitle-link').first
-                    titulo = link_element.inner_text().strip()
-                    url_relativa = link_element.get_attribute('href')
-                    url_vaga = f"{base_url}{url_relativa}"
+                for vaga_tr in vagas_tr:
+                    titulo_tag = vaga_tr.find('a', class_='jobTitle-link')
+                    localizacao_tag = None
                     
-                    # --- SOLUÇÃO DEFINITIVA PARA LOCALIZAÇÃO ---
-                    # Usando um seletor específico que só existe na versão desktop para evitar qualquer ambiguidade.
-                    localizacao = vaga_tr.locator('td.collocation > span.joblocation').inner_text().strip()
+                    desktop_container = vaga_tr.find('td', class_='colLocation')
+                    if desktop_container:
+                        localizacao_tag = desktop_container.find('span', class_='jobLocation')
 
-                    dados_vaga = {
-                        "empresa": "CPFL",
-                        "titulo": titulo,
-                        "localizacao": localizacao,
-                        "modelo_trabalho": "Não informado",
-                        "url_vaga": url_vaga,
-                    }
-                    vagas_encontradas.append(dados_vaga)
+                    if not localizacao_tag or not localizacao_tag.get_text(strip=True):
+                        mobile_container = vaga_tr.find('div', class_='visible-phone')
+                        if mobile_container:
+                            localizacao_tag = mobile_container.find('span', class_='jobLocation')
 
+                    if titulo_tag and localizacao_tag:
+                        titulo = titulo_tag.get_text(strip=True)
+                        url_relativa = titulo_tag['href']
+                        url_vaga = f"{base_url}{url_relativa}"
+                        localizacao = localizacao_tag.get_text(strip=True)
+
+                        if not localizacao: continue
+
+                        dados_vaga = { "empresa": "CPFL", "titulo": titulo, "localizacao": localizacao, "modelo_trabalho": "Não informado", "url_vaga": url_vaga }
+                        vagas_encontradas.append(dados_vaga)
+                
+                # --- LÓGICA DE PAGINAÇÃO FINAL: POR NÚMERO DA PÁGINA ---
                 try:
-                    next_button = page.locator('a.next')
-                    if next_button.get_attribute('aria-disabled') == 'true' or not next_button.is_visible(timeout=3000):
-                        print("Fim da paginação. Não há mais páginas.")
-                        break
-                    else:
-                        print("Navegando para a próxima página...")
-                        next_button.click()
+                    next_page_num_str = str(page_num + 1)
+                    print(f"Procurando link para a página '{next_page_num_str}'...")
+
+                    # Procura o link cujo texto é exatamente o número da próxima página
+                    next_page_link = page.get_by_role("link", name=next_page_num_str, exact=True)
+                    
+                    next_page_link.click(timeout=5000)
+                    
+                    print(f"Navegando para a página {next_page_num_str}...")
+                    page.wait_for_load_state('networkidle', timeout=20000)
+                    page_num += 1
                 except (TimeoutError, Exception):
-                    print("Botão 'Next' não encontrado ou erro na navegação. Fim da coleta.")
+                    print(f"Link para a página {page_num + 1} não encontrado. Fim da coleta.")
                     break
         
         except Exception as e:
-            print(f"❌ Ocorreu um erro inesperado no scraper da CPFL: {e}")
+            print(f"❌ Ocorreu um erro crítico no scraper da CPFL: {e}")
         finally:
             if browser and browser.is_connected():
                 browser.close()
             print("Scraper da CPFL finalizado.")
 
-    print(f"\nColeta bruta finalizada. Total de {len(vagas_encontradas)} vagas encontradas.")
+    print(f"\nColeta bruta finalizada. Total de {len(vagas_encontradas)} vagas encontradas em todas as páginas.")
     print("Aplicando filtro para vagas em 'Campinas, BR'...")
 
-    vagas_filtradas = [
-        vaga for vaga in vagas_encontradas 
-        if vaga.get('localizacao', '').strip().lower() == 'campinas, br'
-    ]
+    vagas_filtradas = [ v for v in vagas_encontradas if v.get('localizacao', '').strip().lower() == 'campinas, br' ]
     
     print(f"Filtro aplicado. {len(vagas_filtradas)} vagas de Campinas serão retornadas.")
-    
     return vagas_filtradas
 
-# --- BLOCO DE TESTE (NÃO PRECISA DE ALTERAÇÃO) ---
+# --- BLOCO DE TESTE ---
 if __name__ == "__main__":
     from src.database import database
     import os
@@ -102,10 +110,28 @@ if __name__ == "__main__":
     TEST_DB_FILE = "data/vagasteste.db"
     database.DB_FILE = TEST_DB_FILE
     
-    print(f"--- EXECUTANDO SCRAPER DA CPFL EM MODO DE TESTE COMPLETO ---")
+    print(f"--- EXECUTANDO SCRAPER DA CPFL EM MODO DE TESTE (PRODUÇÃO) ---")
+
+#TODO: NÂO TA INDO PARA OUTRA PAGINA DAS VAGAS
+
+# --- BLOCO DE TESTE ---
+if __name__ == "__main__":
+    from src.database import database
+    import os
+
+    os.makedirs("data", exist_ok=True)
+    TEST_DB_FILE = "data/vagasteste.db"
+    database.DB_FILE = TEST_DB_FILE
+    
+    print(f"--- EXECUTANDO SCRAPER DA CPFL EM MODO DE TESTE (PRODUÇÃO) ---")
     print(f"--- Os resultados serão salvos em '{TEST_DB_FILE}' ---")
 
     database.inicializar_banco()
+    conn = database.sqlite3.connect(TEST_DB_FILE)
+    conn.execute("DELETE FROM vagas WHERE empresa = 'CPFL'")
+    conn.commit()
+    conn.close()
+    
     vagas_coletadas = raspar()
 
     if vagas_coletadas:
