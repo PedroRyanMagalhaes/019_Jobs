@@ -20,7 +20,8 @@ SCRAPER_CONFIG = {
 EMPRESA_URLS = {
     "Bosch": "https://careers.smartrecruiters.com/BoschGroup/brazil",
     "CPFL": "https://vagas.cpfl.com.br/search",
-    "CI&T": "https://ciandt.com/br/pt-br/carreiras/oportunidades"
+    "CI&T": "https://ciandt.com/br/pt-br/carreiras/oportunidades",
+    "JohnDeere": "https://careers.deere.com/careers?location=Brazil",
 }
 
 # Lista de scrapers ativos

@@ -1,10 +1,10 @@
-CI&T
-Bosch
-CPFL
-John Deere
-Enforce
-Dell
-Lenovo
-Venturus
-KRYPTUS
-sensedia
+CI&T - ok  -campinas
+Bosch - ok -campinas
+CPFL - ok -campinas
+John Deere - Indaiatuba/ Campinas
+Enforce - campinas
+Dell - Hortolândia
+Lenovo - Indaiatuba
+Venturus - campinas
+KRYPTUS - campinas
+sensedia - campinas

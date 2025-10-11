@@ -1,6 +1,7 @@
 from src.database import database
 from src.scrapers import ciandt
 from src.scrapers import Bosch
+from src.scrapers import johndeere
 from src.scrapers import cpfl
 from config.settings import SCRAPERS_ATIVOS
 
@@ -8,7 +9,8 @@ from config.settings import SCRAPERS_ATIVOS
 SCRAPERS_MAP = {
     "Bosch": Bosch,
     "CPFL": cpfl,
-    "CI&T": ciandt
+    "CI&T": ciandt,
+    "JohnDeere": johndeere
 }
 
 # Criar lista de scrapers a partir das configurações
