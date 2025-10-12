@@ -1,15 +1,11 @@
 import time
 from playwright.sync_api import sync_playwright, TimeoutError
-from bs4 import BeautifulSoup
 from config.settings import EMPRESA_URLS, SCRAPER_CONFIG
 import os
 
 def raspar():
     """
-    Realiza o scraping das vagas da John Deere para o Brasil.
-    - Clica em "Mostrar mais posições" e espera de forma inteligente o conteúdo carregar.
-    - Extrai o HTML e usa BeautifulSoup para parsear os dados.
-    - Filtra as vagas para Campinas e Indaiatuba.
+    VERSÃO FINAL: Separa a fase de carregamento da fase de extração para máxima estabilidade.
     """
     
     url = EMPRESA_URLS.get("JohnDeere")
@@ -19,12 +15,12 @@ def raspar():
 
     vagas_para_salvar = []
     base_url = "https://careers.deere.com/careers/jobs/"
-    html_content = ""
 
-    print(f"Iniciando scraper para a John Deere em {url}")
+    print(f"Iniciando scraper para a John Deere em {url} (Modo Estável)")
 
     with sync_playwright() as p:
         browser = p.chromium.launch(
+            args=["--start-maximized"],
             headless=SCRAPER_CONFIG.get("headless", True)
         )
         context = browser.new_context(
@@ -34,77 +30,70 @@ def raspar():
         page = context.new_page()
         
         try:
+            # --- FASE 1: CARREGAR TODAS AS VAGAS ---
             page.goto(url, wait_until="networkidle", timeout=SCRAPER_CONFIG.get("timeout", 60000))
             print("✅ Página carregada.")
 
-            # --- LOOP DE CLIQUE COM ESPERA INTELIGENTE ---
-            print("Procurando por botão 'Mostrar mais posições'...")
+            scroll_container_selector = "div.position-sidebar-scroll-handler"
+            
+            print("Iniciando processo de scroll e clique para carregar tudo...")
             while True:
                 try:
-                    # Conta quantas vagas existem ANTES do clique
                     vagas_antes = page.locator('div.position-card').count()
+                    page.locator(scroll_container_selector).hover()
+                    for _ in range(5):
+                        page.mouse.wheel(0, 1000)
+                        time.sleep(0.3)
                     
                     show_more_button = page.locator('button.show-more-positions')
                     if show_more_button.count() == 0:
-                         print("Botão não encontrado. Assumindo que todas as vagas foram carregadas.")
                          break
 
                     show_more_button.click(timeout=7000)
-                    print(f"Botão clicado. Havia {vagas_antes} vagas. Aguardando novas vagas aparecerem...")
-
-                    # ESPERA INTELIGENTE: Espera até que o número de vagas seja MAIOR que o anterior.
-                    page.locator('div.position-card').nth(vagas_antes).wait_for(timeout=10000)
-                    
-                    vagas_depois = page.locator('div.position-card').count()
-                    print(f"Novas vagas carregadas. Total agora: {vagas_depois}.")
-
+                    page.locator(f'div.position-card >> nth={vagas_antes}').wait_for(timeout=10000)
                 except Exception:
-                    print("Não foi possível encontrar ou clicar no botão (ou novas vagas não carregaram). Fim da coleta.")
+                    print("Fim do carregamento de vagas.")
                     break
-            
-            print("Extraindo o HTML da lista de vagas...")
-            list_container_html = page.locator('div[role="list"]').inner_html()
+
+            # --- FASE 2: EXTRAIR DADOS UMA VAGA DE CADA VEZ ---
+            print("\nIniciando extração de dados...")
+            total_vagas = page.locator('div.position-card').count()
+            print(f"Analisando {total_vagas} vagas encontradas.")
+
+            for i in range(total_vagas):
+                # A cada iteração, reencontramos o card pelo seu índice
+                card = page.locator('div.position-card').nth(i)
+                
+                titulo = card.locator('div.position-title').inner_text()
+                localizacao = card.locator('p.position-location').inner_text()
+                
+                local_lower = localizacao.lower()
+                if 'indaiatuba' not in local_lower and 'campinas' not in local_lower:
+                    continue
+
+                print(f"Processando vaga {i+1}/{total_vagas}: {titulo}...")
+                
+                url_vaga = "Link não disponível"
+                try:
+                    card.click(timeout=5000)
+                    page.wait_for_url('**/*pid=*', timeout=5000)
+                    url_vaga = page.url
+                except Exception:
+                    print(f"  [AVISO] Não foi possível obter o link para esta vaga.")
+                
+                modelo = "Híbrido" 
+                if card.locator('span.pills-module_label__yj2be').count() > 0:
+                    modelo = card.locator('span.pills-module_label__yj2be').inner_text()
+
+                dados_vaga = { "empresa": "John Deere", "titulo": titulo, "localizacao": localizacao, "modelo_trabalho": modelo, "url_vaga": url_vaga }
+                vagas_para_salvar.append(dados_vaga)
             
         except Exception as e:
-            print(f"❌ Ocorreu um erro crítico no scraper da John Deere: {e}")
+            print(f"❌ Ocorreu um erro crítico: {e}")
         finally:
             if browser.is_connected():
                 browser.close()
-            print("Fase de captura do Playwright finalizada.")
-
-    html_content = list_container_html
-
-    print("\nIniciando parse e aplicando regras de negócio...")
-    soup = BeautifulSoup(html_content, 'html.parser')
-    vagas_divs = soup.find_all('div', class_='position-card')
-    print(f"Encontrados {len(vagas_divs)} vagas para analisar.")
-
-    for vaga in vagas_divs:
-        titulo_tag = vaga.find('div', class_='position-title')
-        local_tag = vaga.find('p', class_='position-location')
-        modelo_tag = vaga.find('span', class_='pills-module_label__yj2be')
-        
-        if not (titulo_tag and local_tag):
-            continue
-
-        titulo = titulo_tag.get_text(strip=True)
-        localizacao = local_tag.get_text(strip=True)
-        modelo = modelo_tag.get_text(strip=True) if modelo_tag else "Não informado"
-        
-        local_lower = localizacao.lower()
-        if 'indaiatuba' not in local_lower and 'campinas' not in local_lower:
-            continue
-
-        job_id_attr = vaga.get('data-test-id', '')
-        job_id = job_id_attr.split('-')[-1]
-        url_vaga = f"{base_url}{job_id}" if job_id.isdigit() else "Link não disponível"
-
-        dados_vaga = {
-            "empresa": "John Deere", "titulo": titulo, "localizacao": localizacao,
-            "modelo_trabalho": modelo, "url_vaga": url_vaga
-        }
-        vagas_para_salvar.append(dados_vaga)
-        # print(f"  [VAGA VÁLIDA] {titulo} ({localizacao}) -> {modelo}") # Desativado para um log mais limpo
+            print("Scraper finalizado.")
 
     print(f"\nAnálise finalizada. {len(vagas_para_salvar)} vagas selecionadas para salvar.")
     return vagas_para_salvar
@@ -118,8 +107,7 @@ if __name__ == "__main__":
     database.DB_FILE = TEST_DB_FILE
     
     print(f"--- EXECUTANDO SCRAPER DA JOHN DEERE EM MODO DE TESTE ---")
-    print(f"--- Os resultados serão salvos em '{TEST_DB_FILE}' ---")
-
+    
     database.inicializar_banco()
     conn = database.sqlite3.connect(TEST_DB_FILE)
     conn.execute("DELETE FROM vagas WHERE empresa = 'John Deere'")
@@ -134,6 +122,6 @@ if __name__ == "__main__":
         for vaga in vagas_coletadas:
             if database.salvar_vaga(vaga):
                 novas_vagas_salvas += 1
-        print(f"\nResumo do Teste John Deere: {novas_vagas_salvas} novas vagas foram salvas em '{TEST_DB_FILE}'.")
+        print(f"\nResumo: {novas_vagas_salvas} novas vagas salvas em '{TEST_DB_FILE}'.")
     else:
         print("\n❌ Nenhuma vaga da John Deere foi selecionada no teste.")
