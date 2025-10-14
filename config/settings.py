@@ -28,5 +28,6 @@ EMPRESA_URLS = {
 SCRAPERS_ATIVOS = [
     ("Bosch", "Bosch"),
     ("CPFL", "CPFL"),
-    ("CI&T", "CI&T")
+    ("CI&T", "CI&T"),
+    ("JohnDeere", "John Deere")
 ]

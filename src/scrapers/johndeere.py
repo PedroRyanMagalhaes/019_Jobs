@@ -43,11 +43,11 @@ def raspar():
                     page.locator(scroll_container_selector).hover()
                     for _ in range(5):
                         page.mouse.wheel(0, 1000)
-                        time.sleep(0.3)
+                        time.sleep(1)
                     
                     show_more_button = page.locator('button.show-more-positions')
                     if show_more_button.count() == 0:
-                         break
+                        break
 
                     show_more_button.click(timeout=7000)
                     page.locator(f'div.position-card >> nth={vagas_antes}').wait_for(timeout=10000)
@@ -61,7 +61,7 @@ def raspar():
             print(f"Analisando {total_vagas} vagas encontradas.")
 
             for i in range(total_vagas):
-                # A cada iteração, reencontramos o card pelo seu índice
+                time.sleep(0.3)  # Pequena pausa para estabilidade
                 card = page.locator('div.position-card').nth(i)
                 
                 titulo = card.locator('div.position-title').inner_text()
