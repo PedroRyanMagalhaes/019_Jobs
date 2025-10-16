@@ -22,6 +22,7 @@ EMPRESA_URLS = {
     "CPFL": "https://vagas.cpfl.com.br/search",
     "CI&T": "https://ciandt.com/br/pt-br/carreiras/oportunidades",
     "JohnDeere": "https://careers.deere.com/careers?location=Brazil",
+    "Enforce": "https://job-boards.greenhouse.io/enforce"
 }
 
 # Lista de scrapers ativos
@@ -29,5 +30,6 @@ SCRAPERS_ATIVOS = [
     ("Bosch", "Bosch"),
     ("CPFL", "CPFL"),
     ("CI&T", "CI&T"),
-    ("JohnDeere", "John Deere")
+    ("JohnDeere", "John Deere"),
+    ("Enforce", "Enforce")
 ]

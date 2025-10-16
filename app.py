@@ -3,6 +3,7 @@ from src.scrapers import ciandt
 from src.scrapers import Bosch
 from src.scrapers import johndeere
 from src.scrapers import cpfl
+from src.scrapers import enforce
 from config.settings import SCRAPERS_ATIVOS
 
 # Mapeamento de nomes para módulos
@@ -10,7 +11,8 @@ SCRAPERS_MAP = {
     "Bosch": Bosch,
     "CPFL": cpfl,
     "CI&T": ciandt,
-    "JohnDeere": johndeere
+    "JohnDeere": johndeere,
+    "Enforce": enforce
 }
 
 # Criar lista de scrapers a partir das configurações

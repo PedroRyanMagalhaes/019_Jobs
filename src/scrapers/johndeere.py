@@ -1,3 +1,6 @@
+#To Do : Não está pegando todos os links até o ultima vaga
+
+
 import time
 from playwright.sync_api import sync_playwright, TimeoutError
 from config.settings import EMPRESA_URLS, SCRAPER_CONFIG
