@@ -22,7 +22,8 @@ EMPRESA_URLS = {
     "CPFL": "https://vagas.cpfl.com.br/search",
     "CI&T": "https://ciandt.com/br/pt-br/carreiras/oportunidades",
     "JohnDeere": "https://careers.deere.com/careers?location=Brazil",
-    "Enforce": "https://job-boards.greenhouse.io/enforce"
+    "Enforce": "https://job-boards.greenhouse.io/enforce",
+    "Dell": "https://jobs.dell.com/pt-br/busca-de-vagas/Hortol%C3%A2ndia%2C%20S%C3%A3o%20Paulo/375/4/3469034-3448433-6322273-3461655/-22x85833/-47x22/50/2",
 }
 
 # Lista de scrapers ativos
