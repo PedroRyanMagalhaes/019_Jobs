@@ -1,9 +1,9 @@
 CI&T - ok  -campinas
 Bosch - ok -campinas
 CPFL - ok -campinas
-John Deere - Indaiatuba/ Campinas
-Enforce - campinas
-Dell - Hortolândia
+John Deere -parcial ok - Indaiatuba/ Campinas 
+Enforce - ok - campinas
+Dell - parcial ok - Hortolândia
 Lenovo - Indaiatuba
 Venturus - campinas
 KRYPTUS - campinas

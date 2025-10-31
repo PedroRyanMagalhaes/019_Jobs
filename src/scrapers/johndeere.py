@@ -11,7 +11,7 @@ def raspar():
     VERSÃO FINAL: Separa a fase de carregamento da fase de extração para máxima estabilidade.
     """
     
-    url = EMPRESA_URLS.get("JohnDeere")
+    url = EMPRESA_URLS.get("Johndeere")
     if not url:
         print("❌ URL da John Deere não encontrada nas configurações.")
         return []

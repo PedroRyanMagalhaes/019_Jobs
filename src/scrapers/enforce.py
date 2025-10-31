@@ -1,3 +1,5 @@
+#OK
+
 from playwright.sync_api import sync_playwright, TimeoutError
 from bs4 import BeautifulSoup
 from config.settings import EMPRESA_URLS, SCRAPER_CONFIG

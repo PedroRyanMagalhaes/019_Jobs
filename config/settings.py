@@ -19,11 +19,12 @@ SCRAPER_CONFIG = {
 # URLs das empresas
 EMPRESA_URLS = {
     "Bosch": "https://careers.smartrecruiters.com/BoschGroup/brazil",
-    "CPFL": "https://vagas.cpfl.com.br/search",
-    "CI&T": "https://ciandt.com/br/pt-br/carreiras/oportunidades",
-    "JohnDeere": "https://careers.deere.com/careers?location=Brazil",
+    "Cpfl": "https://vagas.cpfl.com.br/search",
+    "Ciandt": "https://ciandt.com/br/pt-br/carreiras/oportunidades",
+    "Johndeere": "https://careers.deere.com/careers?location=Brazil",
     "Enforce": "https://job-boards.greenhouse.io/enforce",
     "Dell": "https://jobs.dell.com/pt-br/busca-de-vagas/Hortol%C3%A2ndia%2C%20S%C3%A3o%20Paulo/375/4/3469034-3448433-6322273-3461655/-22x85833/-47x22/50/2",
+    "Lenovo": "https://jobs.lenovo.com/pt_BR/careers/SearchJobs/?13036=%5B12016606%5D&13036_format=6621&listFilterMode=1&jobRecordsPerPage=10&"
 }
 
 # Lista de scrapers ativos
@@ -32,5 +33,7 @@ SCRAPERS_ATIVOS = [
     ("CPFL", "CPFL"),
     ("CI&T", "CI&T"),
     ("JohnDeere", "John Deere"),
-    ("Enforce", "Enforce")
+    ("Enforce", "Enforce"),
+    ("Dell", "Dell"),
+    ("Lenovo", "Lenovo")
 ]

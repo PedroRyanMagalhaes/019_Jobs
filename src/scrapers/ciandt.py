@@ -1,3 +1,5 @@
+#OK
+
 import time
 from playwright.sync_api import sync_playwright, TimeoutError
 from bs4 import BeautifulSoup
@@ -9,7 +11,7 @@ def raspar():
     VERSÃO DE PRODUÇÃO: Captura a lista correta de vagas e aplica a lógica de negócio final.
     """
     
-    url = EMPRESA_URLS.get("CI&T")
+    url = EMPRESA_URLS.get("Ciandt")
     cookie_file_path = "data/ciandt_cookies.json"
     if not url or not os.path.exists(cookie_file_path):
         print(f"❌ ERRO: URL da CI&T ou arquivo de cookies '{cookie_file_path}' não encontrado.")

@@ -1,8 +1,4 @@
-#TODO: NÂO TA INDO PARA OUTRA PAGINA DAS VAGAS
-
-
-
-
+#TODO: NÂO TA INDO PARA PAGINA 2 DAS VAGAS QUANDO TEM
 
 
 import time
@@ -16,7 +12,7 @@ def raspar():
     VERSÃO DE PRODUÇÃO: Usa a estratégia com BeautifulSoup e paginação por número de página.
     """
     
-    url = EMPRESA_URLS.get("CPFL")
+    url = EMPRESA_URLS.get("Cpfl")
     if not url:
         print("❌ URL da CPFL não encontrada nas configurações.")
         return []
