@@ -1,53 +1,118 @@
-# Jobs em Campinas
+# 🎯 Jobs Tech Campinas - MVP
 
-Sistema automatizado para coleta de vagas de emprego em Campinas e região.
+Sistema inteligente automatizado para **coleta e filtragem** de vagas de tecnologia em Campinas e região, utilizando **IA Gemini** para classificação automática.
 
-## Estrutura do Projeto
+---
+
+## 🚀 **Funcionalidades**
+
+✅ Web scraping de múltiplas empresas simultaneamente  
+✅ **Filtragem inteligente com IA Gemini** (identifica automaticamente vagas de tech)  
+✅ Armazenamento local em SQLite (apenas vagas relevantes)  
+✅ Sistema modular e escalável  
+✅ Prevenção de duplicatas  
+✅ Logs detalhados do processo  
+
+---
+
+## 📁 **Estrutura do Projeto**
 
 ```
-├── src/                    # Código fonte principal
-│   ├── database/           # Módulos relacionados ao banco de dados
+019_Jobs/
+├── src/
+│   ├── ai/                      # 🤖 Módulo de IA
 │   │   ├── __init__.py
-│   │   └── database.py     # Funções de conexão e manipulação do SQLite
-│   ├── scrapers/           # Módulos de web scraping
+│   │   └── gemini_filter.py     # Filtro inteligente com Gemini API
+│   ├── database/                # 💾 Banco de dados
 │   │   ├── __init__.py
-│   │   └── ciandt.py       # Scraper para vagas da CI&T
+│   │   └── database.py          # Funções SQLite
+│   ├── scrapers/                # 🕷️ Web Scrapers
+│   │   
 │   └── __init__.py
-├── config/                 # Configurações do projeto
+├── config/
 │   ├── __init__.py
-│   └── settings.py         # Configurações centralizadas
-├── data/                   # Dados do projeto
-│   ├── Empresas.txt        # Lista de empresas e informações
-│   └── vagas.db           # Banco de dados SQLite (gerado automaticamente)
-├── docs/                   # Documentação
-│   └── Verificação de Empresas em Campinas e Região.pdf
-├── app.py                  # Arquivo principal de execução
-└── requirements.txt        # Dependências do projeto
+│   └── settings.py              # ⚙️ Configurações (API keys, empresas ativas)
+├── data/
+│   ├── Empresas.txt
+│   ├── Empresas_Extras.txt
+│   ├── PrimeirasEmpresas.txt
+│   └── vagas.db                 # 📊 Banco SQLite (gerado automaticamente)
+├── app.py                       # 🎬 Arquivo principal
+├── requirements.txt
+└── README.md
 ```
 
-## Como usar
+---
 
-1. Instale as dependências:
-   ```bash
-   pip install -r requirements.txt
-   ```
+## 🔄 **Fluxo de Funcionamento**
 
-2. Execute o scraper:
-   ```bash
-   python app.py
-   ```
+```
+┌─────────────────┐
+│   Inicializa    │ Prepara banco de dados
+│    Sistema      │
+└────────┬────────┘
+         │
+         ↓
+┌─────────────────┐
+│   Web Scraping  │ Coleta vagas das empresas
+│  (Bosch, CI&T,  │ (título, descrição, link, etc)
+│   Dell, etc)    │
+└────────┬────────┘
+         │
+         ↓ (50 vagas coletadas)
+         │
+┌─────────────────┐
+│  🤖 IA Gemini   │ Analisa cada vaga:
+│   Classifica    │ ✅ "Dev Python" → TECH
+│                 │ ❌ "Analista RH" → Descarta
+└────────┬────────┘
+         │
+         ↓ (30 vagas tech filtradas)
+         │
+┌─────────────────┐
+│  Salva no BD    │ Apenas vagas de tecnologia
+│   (vagas.db)    │ Evita duplicatas
+└─────────────────┘
+```
 
-## Configurações
 
-As configurações do projeto estão centralizadas em `config/settings.py`, incluindo:
-- URLs das empresas
-- Configurações do banco de dados
-- Configurações dos scrapers
-- Localizações alvo
 
-## Adicionando novos scrapers
+## 📊 **Estrutura do Banco de Dados**
 
-1. Crie um novo arquivo em `src/scrapers/`
-2. Implemente a função `raspar()` que retorna uma lista de vagas
-3. Adicione o scraper em `config/settings.py` na lista `SCRAPERS_ATIVOS`
-4. Atualize o mapeamento em `app.py` se necessário
+Tabela `vagas`:
+```sql
+CREATE TABLE vagas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    titulo TEXT NOT NULL,
+    empresa TEXT NOT NULL,
+    localizacao TEXT,
+    link TEXT UNIQUE,
+    descricao TEXT,
+    data_coleta DATE,
+    is_tech BOOLEAN DEFAULT 1
+)
+```
+
+---
+
+## 📈 **Próximas Melhorias (Roadmap)**
+
+- [ ] 📧 Envio de vagas por e-mail
+- [ ] 💬 Notificações via Telegram
+- [ ] 📊 Dashboard web com estatísticas
+- [ ] 🔄 Cache de decisões da IA
+- [ ] ⚡ Análise em lote paralela
+- [ ] 🎯 Filtros personalizados (seniority, salário, etc)
+
+---
+
+
+## 👤 **Autor**
+
+**Pedro Ryan Magalhães**  
+GitHub: [@PedroRyanMagalhaes](https://github.com/PedroRyanMagalhaes)
+
+---
+
+
+**⚡ Desenvolvido com Python + IA Gemini**

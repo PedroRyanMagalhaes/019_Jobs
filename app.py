@@ -16,7 +16,7 @@ SCRAPERS_MAP = {
     "JohnDeere": Johndeere,
     "Enforce": Enforce,
     "Dell": Dell,
-    "Lenovo": Lenovo
+    #"Lenovo": Lenovo
     
 }
 
