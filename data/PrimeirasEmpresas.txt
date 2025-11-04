@@ -3,8 +3,10 @@ Bosch - ok -campinas
 CPFL - ok -campinas
 John Deere -parcial ok - Indaiatuba/ Campinas 
 Enforce - ok - campinas
-Dell - parcial ok - Hortolândia
-Lenovo - Indaiatuba
+(sem vagas ) Dell - parcial ok - Hortolândia
+Lenovo - ok - Indaiatuba
 Venturus - campinas
+ype - campinas 
 KRYPTUS - campinas
 sensedia - campinas
+ifood - campinas 
