@@ -35,5 +35,5 @@ SCRAPERS_ATIVOS = [
     ("JohnDeere", "John Deere"),
     ("Enforce", "Enforce"),
     ("Dell", "Dell"),
-    #("Lenovo", "Lenovo")
+    ("Lenovo", "Lenovo")
 ]
