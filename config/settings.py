@@ -24,7 +24,8 @@ EMPRESA_URLS = {
     "Johndeere": "https://careers.deere.com/careers?location=Brazil",
     "Enforce": "https://job-boards.greenhouse.io/enforce",
     "Dell": "https://jobs.dell.com/pt-br/busca-de-vagas/Hortol%C3%A2ndia%2C%20S%C3%A3o%20Paulo/375/4/3469034-3448433-6322273-3461655/-22x85833/-47x22/50/2",
-    "Lenovo": "https://jobs.lenovo.com/en_US/careers/SearchJobs/?13036=%5B12016606%5D&13036_format=6621&13037=%5B12019986%5D&13037_format=6622&listFilterMode=1&jobRecordsPerPage=10&"
+    "Lenovo": "https://jobs.lenovo.com/en_US/careers/SearchJobs/?13036=%5B12016606%5D&13036_format=6621&13037=%5B12019986%5D&13037_format=6622&listFilterMode=1&jobRecordsPerPage=10&",
+    "Venturus":"https://venturus.inhire.app/vagas/"
 }
 
 # Lista de scrapers ativos
@@ -35,5 +36,6 @@ SCRAPERS_ATIVOS = [
     ("JohnDeere", "John Deere"),
     ("Enforce", "Enforce"),
     ("Dell", "Dell"),
-    ("Lenovo", "Lenovo")
+    ("Lenovo", "Lenovo"),
+    ("Venturus", "Venturus")
 ]
