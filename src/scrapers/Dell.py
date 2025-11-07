@@ -1,12 +1,10 @@
-#TO DO: NÂO TA ACHANDO NENHUMA VAGA
-
 from playwright.sync_api import sync_playwright, TimeoutError
 from config.settings import EMPRESA_URLS, SCRAPER_CONFIG
 import os
 
 def raspar():
     """
-    Realiza o scraping das vagas da Dell, com o seletor de vagas corrigido.
+    Realiza o scraping das vagas da Dell, com seletor corrigido baseado no ID da seção.
     """
     
     url = EMPRESA_URLS.get("Dell")
@@ -22,6 +20,7 @@ def raspar():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=SCRAPER_CONFIG.get("headless", True))
         context = browser.new_context(user_agent=SCRAPER_CONFIG.get("user_agent"))
+        # Nega permissão de geolocalização para evitar pop-ups
         context.grant_permissions([], origin=url)
         page = context.new_page()
         
@@ -29,41 +28,60 @@ def raspar():
             page.goto(url, wait_until="domcontentloaded", timeout=SCRAPER_CONFIG.get("timeout", 60000))
             print("✅ Estrutura da página carregada.")
 
+            # --- TENTATIVA DE ACEITAR COOKIES ---
             try:
                 print("Procurando por banner de cookies...")
                 cookie_button = page.locator("#igdpr-button")
-                cookie_button.click(timeout=10000)
-                print("✅ Banner de cookies aceito.")
-                page.wait_for_timeout(2000)
+                if cookie_button.is_visible(timeout=5000):
+                    cookie_button.click()
+                    print("✅ Banner de cookies aceito.")
+                    page.wait_for_timeout(2000) # Espera a página reagir
+                else:
+                     print("⚠️ Banner de cookies não apareceu.")
             except Exception:
-                print("⚠️ Banner de cookies não encontrado ou já aceito.")
+                print("⚠️ Erro ao tentar interagir com banner de cookies (pode já ter sido aceito).")
 
             print("\nIniciando análise das vagas...")
             
-            # --- SELETOR CORRIGIDO AQUI ---
-            # Removemos os '>' para um seletor mais flexível que encontra os <li> em qualquer nível
-            vaga_items = page.locator('section.jobs-list li').all()
+            # --- CORREÇÃO PRINCIPAL: NOVO SELETOR E ESPERA ---
+            # O seletor agora usa o ID que você mostrou no print: #search-results-list
+            seletor_vagas = '#search-results-list ul > li'
+            
+            try:
+                # Espera até que pelo menos uma vaga seja visível na tela
+                print("Aguardando a lista de vagas carregar...")
+                page.wait_for_selector(seletor_vagas, timeout=20000)
+            except TimeoutError:
+                 print("❌ Timeout: A lista de vagas não carregou. Pode não haver vagas para este filtro.")
+                 return []
+
+            vaga_items = page.locator(seletor_vagas).all()
             print(f"Analisando {len(vaga_items)} vagas encontradas.")
 
             for item in vaga_items:
-                link_tag = item.locator('a')
+                # Verifica se é um item de vaga real (tem que ter um link <a> dentro)
+                link_tag = item.locator('a').first
+                if link_tag.count() == 0:
+                    continue
                 
-                # Verifica se os elementos existem antes de tentar extrair o texto
-                if link_tag.locator('h2').count() > 0 and link_tag.locator('span.job-location').count() > 0:
-                    titulo = link_tag.locator('h2').inner_text()
-                    localizacao = link_tag.locator('span.job-location').inner_text()
+                titulo_tag = link_tag.locator('h2')
+                localizacao_tag = link_tag.locator('span.job-location')
+
+                if titulo_tag.count() > 0 and localizacao_tag.count() > 0:
+                    titulo = titulo_tag.inner_text().strip()
+                    localizacao = localizacao_tag.inner_text().strip()
                     url_relativa = link_tag.get_attribute('href')
-                    url_vaga = f"{base_url}{url_relativa}"
+                    url_vaga = f"{base_url}{url_relativa}" if not url_relativa.startswith('http') else url_relativa
                     
                     dados_vaga = {
                         "empresa": "Dell",
                         "titulo": titulo,
-                        "localizacao": localizacao.strip().replace('\xa0', ' '), # Limpa espaços extras
+                        "localizacao": localizacao,
                         "modelo_trabalho": "Não informado",
                         "url_vaga": url_vaga
                     }
                     vagas_para_salvar.append(dados_vaga)
-                    print(f"  [VAGA VÁLIDA] {titulo} ({dados_vaga['localizacao']})")
+                    print(f"  [VAGA VÁLIDA] {titulo} ({localizacao})")
             
         except Exception as e:
             print(f"❌ Ocorreu um erro crítico no scraper da Dell: {e}")
@@ -84,8 +102,7 @@ if __name__ == "__main__":
     database.DB_FILE = TEST_DB_FILE
     
     print(f"--- EXECUTANDO SCRAPER DA DELL EM MODO DE TESTE ---")
-    print(f"--- Os resultados serão salvos em '{TEST_DB_FILE}' ---")
-
+    
     database.inicializar_banco()
     conn = database.sqlite3.connect(TEST_DB_FILE)
     conn.execute("DELETE FROM vagas WHERE empresa = 'Dell'")

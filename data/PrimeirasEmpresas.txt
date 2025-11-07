@@ -1,9 +1,9 @@
 CI&T - ok  -campinas
 Bosch - ok -campinas
-CPFL - ok -campinas
+CPFL - parcial ok -campinas
 John Deere -parcial ok - Indaiatuba/ Campinas 
 Enforce - ok - campinas
-(sem vagas ) Dell - parcial ok - Hortolândia
+Dell - ok - Hortolândia (talvez)
 Lenovo - ok - Indaiatuba
 Venturus - campinas
 ype - campinas 
