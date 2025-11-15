@@ -7,6 +7,7 @@ from src.scrapers import Enforce
 from src.scrapers import Dell
 from src.scrapers import Lenovo
 from src.scrapers import Venturus
+from.src.scrapers import Ype
 from config.settings import SCRAPERS_ATIVOS
 
 # Mapeamento de nomes para módulos
@@ -18,7 +19,8 @@ SCRAPERS_MAP = {
     "Enforce": Enforce,
     "Dell": Dell,
     "Lenovo": Lenovo,
-    "Venturus": Venturus
+    "Venturus": Venturus,
+    "Ype": Ype
     
 }
 
