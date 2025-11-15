@@ -5,7 +5,7 @@ John Deere -parcial ok - Indaiatuba/ Campinas
 Enforce - ok - campinas
 Dell - ok - Hortolândia (talvez)
 Lenovo - ok - Indaiatuba
-Venturus - campinas
+Venturus - ok - campinas
 ype - campinas 
 KRYPTUS - campinas
 sensedia - campinas
