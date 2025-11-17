@@ -30,6 +30,7 @@ EMPRESA_URLS = {
     "Kryptus": "https://kryptus.gupy.io/",
     "Sensedia": "https://sensedia.hire.trakstar.com/",
     "Ambevtech": "https://ambevtech.gupy.io/",
+    "Kumulus": "https://jobs.quickin.io/kumulus/jobs"
 }
 
 # Lista de scrapers ativos
@@ -46,4 +47,5 @@ SCRAPERS_ATIVOS = [
     ("Kryptus", "Kryptus"),
     ("Sensedia", "Sensedia"),
     ("Ambevtech", "Ambevtech"),
+    ("Kumulus", "Kumulus")
 ]
