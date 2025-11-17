@@ -6,7 +6,7 @@ Enforce - ok - campinas
 Dell - ok - Hortolândia (talvez)
 Lenovo - ok - Indaiatuba
 Venturus - ok - campinas
-ype - campinas 
+ype - ok -  campinas 
 KRYPTUS - campinas
 sensedia - campinas
 ifood - campinas 

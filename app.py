@@ -8,6 +8,7 @@ from src.scrapers import Dell
 from src.scrapers import Lenovo
 from src.scrapers import Venturus
 from.src.scrapers import Ype
+from src.scrapers import Kryptus
 from config.settings import SCRAPERS_ATIVOS
 
 # Mapeamento de nomes para módulos
@@ -20,8 +21,8 @@ SCRAPERS_MAP = {
     "Dell": Dell,
     "Lenovo": Lenovo,
     "Venturus": Venturus,
-    "Ype": Ype
-    
+    "Ype": Ype,
+    "Kryptus": Kryptus,
 }
 
 # Criar lista de scrapers a partir das configurações
