@@ -6,6 +6,16 @@ DATABASE_CONFIG = {
     "backup_dir": "src/database/backups/"
 }
 
+# Configurações de Banco de Dados
+DB_FILE = "src/database/vagas.db"
+DB_TECH_FILE = "src/database/vagastech.db"
+
+# Configurações de IA
+USE_OLLAMA = True  # True = Ollama local, False = Gemini API
+OLLAMA_BASE_URL = "http://localhost:11434"  # URL padrão do Ollama
+OLLAMA_MODEL = "llama3.2"  # Modelo recomendado (3B - rápido e eficiente)
+GEMINI_API_KEY = "AIzaSyCQqclRdNsjHr452nkY1HUIOqdcQdLO9GA"  # Backup se não usar Ollama  
+
 # Configurações dos scrapers
 SCRAPER_CONFIG = {
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chromium/118.0.0.0 Chrome/118.0.0.0 Safari/537.36",

@@ -1,4 +1,6 @@
 from src.database import database
+from src.database import database_tech 
+from src.IA.classificador import ClassificadorVagasTech
 from src.scrapers import Ciandt
 from src.scrapers import Bosch
 from src.scrapers import Johndeere
@@ -45,6 +47,7 @@ def main():
 
     print("\n--- PASSO 1: Preparando o Banco de Dados ---")
     database.inicializar_banco()
+    database_tech.inicializar_banco_tech()
 
     for scraper_module, nome_empresa in SCRAPERS_A_EXECUTAR:
         print(f"\n--- PASSO: Executando Scraper da {nome_empresa} ---")
@@ -65,9 +68,27 @@ def main():
         else:
             print(f"Nenhuma vaga nova da {nome_empresa} para salvar.")
 
+    print("\n--- PASSO FINAL: Classificando Vagas Tech com IA ---")
+    classificador = ClassificadorVagasTech()
+    vagas_tech_encontradas = classificador.processar_vagas_novas()
+    
+    # Estatísticas finais
+    total_tech = database_tech.contar_vagas_tech()
+    vagas_por_empresa = database_tech.listar_vagas_tech_por_empresa()
+
+    print(f"\n📊 RESUMO FINAL:")
+    print(f"   • Vagas tech processadas agora: {vagas_tech_encontradas}")
+    print(f"   • Total vagas tech no banco: {total_tech}")
+    print(f"   • Banco principal: {database.DB_FILE}")
+    print(f"   • Banco tech: {database_tech.DB_TECH_FILE}")
+    
+    if vagas_por_empresa:
+        print(f"\n📈 TOP EMPRESAS TECH:")
+        for empresa, count in list(vagas_por_empresa.items())[:5]:
+            print(f"   • {empresa}: {count} vagas")
+
     print("\n==============================================")
     print("== PROCESSO FINALIZADO ==")
-
-
+    
 if __name__ == "__main__":
     main()
