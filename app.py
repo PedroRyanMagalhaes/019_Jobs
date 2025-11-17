@@ -45,6 +45,11 @@ def main():
 
     print("\n--- PASSO 1: Preparando o Banco de Dados ---")
     database.inicializar_banco()
+    
+    print("\n--- PASSO 2: Iniciando Ciclo de Scraping ---")
+    database.iniciar_ciclo_scraping()
+
+    total_novas_vagas = 0
 
     for scraper_module, nome_empresa in SCRAPERS_A_EXECUTAR:
         print(f"\n--- PASSO: Executando Scraper da {nome_empresa} ---")
@@ -62,11 +67,24 @@ def main():
                 if database.salvar_vaga(vaga):
                     novas_vagas_salvas += 1
             print(f"\nResumo {nome_empresa}: {novas_vagas_salvas} novas vagas foram salvas.")
+            total_novas_vagas += novas_vagas_salvas
         else:
             print(f"Nenhuma vaga nova da {nome_empresa} para salvar.")
 
+    print("\n--- PASSO FINAL: Finalizando Ciclo de Scraping ---")
+    database.finalizar_ciclo_scraping()
+    
+    # Estatísticas finais
+    vagas_ativas = database.contar_vagas()
+    vagas_removidas = database.contar_vagas_removidas()
+    
     print("\n==============================================")
     print("== PROCESSO FINALIZADO ==")
+    print(f"📊 ESTATÍSTICAS:")
+    print(f"   ✅ Novas vagas adicionadas hoje: {total_novas_vagas}")
+    print(f"   📈 Total de vagas ativas: {vagas_ativas}")
+    print(f"   📦 Total de vagas removidas (histórico): {vagas_removidas}")
+    print("==============================================")
     
 if __name__ == "__main__":
     main()
