@@ -10,7 +10,7 @@ DATABASE_CONFIG = {
 SCRAPER_CONFIG = {
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chromium/118.0.0.0 Chrome/118.0.0.0 Safari/537.36",
     "timeout": 60000,
-    "headless": False,
+    "headless": True,
     "delay_min": 0.5,
     "delay_max": 1.5
 }
@@ -30,7 +30,8 @@ EMPRESA_URLS = {
     "Kryptus": "https://kryptus.gupy.io/",
     "Sensedia": "https://sensedia.hire.trakstar.com/",
     "Ambevtech": "https://ambevtech.gupy.io/",
-    "Kumulus": "https://jobs.quickin.io/kumulus/jobs"
+    "Kumulus": "https://jobs.quickin.io/kumulus/jobs",
+    "Ifood": "https://carreiras.ifood.com.br/jobs/"
 }
 
 # Lista de scrapers ativos
@@ -47,5 +48,6 @@ SCRAPERS_ATIVOS = [
     ("Kryptus", "Kryptus"),
     ("Sensedia", "Sensedia"),
     ("Ambevtech", "Ambevtech"),
-    ("Kumulus", "Kumulus")
+    ("Kumulus", "Kumulus"),
+    ("Ifood", "Ifood"),
 ]

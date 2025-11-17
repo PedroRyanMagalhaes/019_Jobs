@@ -12,6 +12,7 @@ from src.scrapers import Kryptus
 from src.scrapers import Ambevtech
 from src.scrapers import Kumulus
 from src.scrapers import Sensedia
+from src.scrapers import Ifood
 from config.settings import SCRAPERS_ATIVOS
 
 # Mapeamento de nomes para módulos
@@ -29,6 +30,7 @@ SCRAPERS_MAP = {
     "Sensedia": Sensedia,
     "Ambevtech": Ambevtech,
     "Kumulus": Kumulus,
+    "Ifood": Ifood
 }
 
 # Criar lista de scrapers a partir das configurações
