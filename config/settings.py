@@ -28,7 +28,8 @@ EMPRESA_URLS = {
     "Venturus":"https://venturus.inhire.app/vagas/",
     "Ype": "https://carreirasype.gupy.io/",
     "Kryptus": "https://kryptus.gupy.io/",
-    "Sensedia": "https://sensedia.hire.trakstar.com/"
+    "Sensedia": "https://sensedia.hire.trakstar.com/",
+    "Ambevtech": "https://ambevtech.gupy.io/",
 }
 
 # Lista de scrapers ativos
@@ -44,4 +45,5 @@ SCRAPERS_ATIVOS = [
     ("Ype", "Ype"),
     ("Kryptus", "Kryptus"),
     ("Sensedia", "Sensedia"),
+    ("Ambevtech", "Ambevtech"),
 ]

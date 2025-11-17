@@ -3,12 +3,12 @@ Bosch - ok -campinas
 CPFL - parcial ok -campinas
 John Deere -parcial ok - Indaiatuba/ Campinas 
 Enforce - ok - campinas
-Dell - ok - Hortolândia (talvez)
+Dell - ok - Hortolândia 
 Lenovo - ok - Indaiatuba
 Venturus - ok - campinas
 ype - ok -  campinas 
 KRYPTUS- ok - campinas
-sensedia -ok - campinas
+sensedia - ok - campinas
 ifood - campinas 
-Kumulus
-ambevtech
+Kumulus - 
+ambevtech - ok - Campinas / Jaguariuna

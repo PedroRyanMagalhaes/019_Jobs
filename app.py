@@ -9,6 +9,7 @@ from src.scrapers import Lenovo
 from src.scrapers import Venturus
 from src.scrapers import Ype
 from src.scrapers import Kryptus
+from src.scrapers import AmbevTech
 from src.scrapers import Sensedia
 from config.settings import SCRAPERS_ATIVOS
 
@@ -25,6 +26,7 @@ SCRAPERS_MAP = {
     "Ype": Ype,
     "Kryptus": Kryptus,
     "Sensedia": Sensedia,
+    "AmbevTech": AmbevTech,
 }
 
 # Criar lista de scrapers a partir das configurações
