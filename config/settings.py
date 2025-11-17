@@ -14,7 +14,6 @@ DB_TECH_FILE = "src/database/vagastech.db"
 USE_OLLAMA = True  # True = Ollama local, False = Gemini API
 OLLAMA_BASE_URL = "http://localhost:11434"  # URL padrão do Ollama
 OLLAMA_MODEL = "llama3.2"  # Modelo recomendado (3B - rápido e eficiente)
-GEMINI_API_KEY = "AIzaSyCQqclRdNsjHr452nkY1HUIOqdcQdLO9GA"  # Backup se não usar Ollama  
 
 # Configurações dos scrapers
 SCRAPER_CONFIG = {
