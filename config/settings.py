@@ -1,4 +1,9 @@
 # Configurações do projeto 019Jobs em Campinas
+import os
+from dotenv import load_dotenv
+
+# Carregar variáveis de ambiente do arquivo .env
+load_dotenv()
 
 # Configurações do banco de dados
 DATABASE_CONFIG = {
@@ -56,4 +61,4 @@ SCRAPERS_ATIVOS = [
 ]
 
 # Configuração da Gemini API
-GEMINI_API_KEY = "AIzaSyCQqclRdNsjHr452nkY1HUIOqdcQdLO9GA"  # Substitua pela sua chave real
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "SUA_API_KEY_AQUI")  # Lê do arquivo .env
