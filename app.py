@@ -85,6 +85,15 @@ def main():
     print(f"   📈 Total de vagas ativas: {vagas_ativas}")
     print(f"   📦 Total de vagas removidas (histórico): {vagas_removidas}")
     print("==============================================")
+
+    # Passo extra: Processar Funil Inteligente e salvar em vagas_filtradas.db
+    print("\n--- PASSO EXTRA: Processando Funil Inteligente ---")
+    try:
+        from src.database.processa_funil import processar_funil
+        processar_funil()
+        print("Funil Inteligente executado com sucesso. Resultados salvos em vagas_filtradas.db.")
+    except Exception as e:
+        print(f"❌ Erro ao executar o Funil Inteligente: {e}")
     
 if __name__ == "__main__":
     main()

@@ -54,3 +54,6 @@ SCRAPERS_ATIVOS = [
     ("Kumulus", "Kumulus"),
     ("Ifood", "Ifood"),
 ]
+
+# Configuração da Gemini API
+GEMINI_API_KEY = "AIzaSyCQqclRdNsjHr452nkY1HUIOqdcQdLO9GA"  # Substitua pela sua chave real
