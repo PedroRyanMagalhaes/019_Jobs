@@ -144,9 +144,9 @@ def processar_funil():
     print(f"❌ Reprovadas direto (palavras-chave): {len(reprovadas_direto)}")
     print(f"❓ Enviando para IA: {len(duvidas)}")
     
-    # Salvar aprovadas direto
+    # Salvar aprovadas direto com marcação "tech funil"
     for vaga in aprovadas_direto:
-        salvar_vaga_filtrada(db_filtrado, vaga, 'tech')
+        salvar_vaga_filtrada(db_filtrado, vaga, 'tech funil')
     
     # Processar dúvidas em lotes
     if duvidas:
@@ -165,12 +165,12 @@ def processar_funil():
             for vaga in batch_vagas:
                 titulo = vaga[2]
                 if resultado_ia.get(titulo, False):
-                    classificacao = 'tech'
+                    classificacao = 'tech IA'
                     salvar_vaga_filtrada(db_filtrado, vaga, classificacao)
-                    print(f"✅ Tech: {titulo}")
+                    print(f"✅ Tech (IA): {titulo}")
                 else:
                     classificacao = 'non-tech'
-                    print(f"❌ Non-Tech: {titulo}")
+                    print(f"❌ Non-Tech (IA): {titulo}")
     
     print(f"\n🎉 Funil Inteligente concluído! Resultados salvos em: {db_filtrado}")
 
