@@ -7,7 +7,7 @@ import os
 
 DB_PATH = os.path.join('src', 'database', 'usuarios_newsletter.db')
 
-def adicionar_assinante(email, nome=''):
+def adicionar_assinante(email, nome='', ativo=True):
     """Adiciona um novo assinante"""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -16,11 +16,12 @@ def adicionar_assinante(email, nome=''):
     
     try:
         cursor.execute('''
-        INSERT INTO assinantes (email, nome, token_cancelamento) 
-        VALUES (?, ?, ?)
-        ''', (email, nome, token))
+        INSERT INTO assinantes (email, nome, token_cancelamento, ativo) 
+        VALUES (?, ?, ?, ?)
+        ''', (email, nome, token, 1 if ativo else 0))
         conn.commit()
-        print(f"✅ {email} adicionado com sucesso!")
+        status = "✅ ATIVO" if ativo else "❌ INATIVO"
+        print(f"✅ {email} adicionado como {status}!")
         return True
     except sqlite3.IntegrityError:
         print(f"⚠️ {email} já está cadastrado")

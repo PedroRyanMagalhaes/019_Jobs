@@ -78,8 +78,8 @@ def enviar_emails(teste=False):
         
         try:
             params = {
-                'from': 'Vagas Tech <onboarding@resend.dev>',  # Trocar depois por seu domínio
-                'to': [assinante['email']],
+                'from': 'Vagas Tech <onboarding@resend.dev>',  # Email de teste do Resend
+                'to': ['pedroryan.ra@outlook.com'],  # Só pode enviar pro seu email no plano gratuito
                 'subject': f"🌆 {len(vagas)} Vagas Tech • {datetime.now().strftime('%d/%m/%Y')}",
                 'html': html
             }
