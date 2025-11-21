@@ -1,0 +1,30 @@
+<div style="background: linear-gradient(135deg, rgba(120, 115, 245, 0.1) 0%, rgba(255, 110, 199, 0.1) 100%); border: 1px solid rgba(0, 255, 255, 0.3); margin-bottom: 20px; padding: 25px; position: relative;">
+    
+    <!-- Badge de Classificação -->
+    <div style="position: absolute; top: 15px; right: 15px;">
+        <span style="background: {% if vaga.origem == 'tech funil' %}linear-gradient(135deg, #00ffff 0%, #7873f5 100%){% else %}linear-gradient(135deg, #ff6ec7 0%, #7873f5 100%){% endif %}; color: #000; padding: 6px 12px; font-size: 9px; letter-spacing: 2px; font-weight: bold; border: 1px solid rgba(255,255,255,0.3);">
+            {{ vaga.origem|upper }}
+        </span>
+    </div>
+    
+    <!-- Título -->
+    <h3 style="margin: 0 100px 15px 0; color: #ffffff; font-size: 18px; letter-spacing: 1px; line-height: 1.4; font-weight: 400;">
+        {{ vaga.titulo }}
+    </h3>
+    
+    <!-- Info da Empresa -->
+    <div style="margin: 15px 0; padding: 12px 0; border-top: 1px solid rgba(0, 255, 255, 0.2); border-bottom: 1px solid rgba(0, 255, 255, 0.2);">
+        <p style="margin: 0; color: #ff6ec7; font-size: 14px; letter-spacing: 1px;">
+            <strong>{{ vaga.empresa }}</strong>
+        </p>
+        <p style="margin: 8px 0 0 0; color: #00ffff; font-size: 12px; letter-spacing: 1px; opacity: 0.8;">
+            📍 {{ vaga.localizacao }}
+        </p>
+    </div>
+    
+    <!-- Botão CTA -->
+    <a href="{{ vaga.link }}" style="display: inline-block; margin-top: 20px; background: linear-gradient(135deg, #ff6ec7 0%, #7873f5 100%); color: #ffffff; padding: 12px 30px; text-decoration: none; font-size: 12px; letter-spacing: 3px; font-weight: bold; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 0 15px rgba(255, 110, 199, 0.4);">
+        [ VER VAGA ]
+    </a>
+    
+</div>
