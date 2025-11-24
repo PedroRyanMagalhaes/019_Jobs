@@ -11,13 +11,13 @@ from dotenv import load_dotenv
 # Adicionar o diretório raiz ao path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
-from src.newsletter.buscar_vagas import buscar_vagas_recentes, contar_vagas_por_origem
+from src.newsletter.buscar_vagas import buscar_vagas_recentes, buscar_vagas_ativas, contar_vagas_por_origem
 from src.newsletter.gerenciar_assinantes import buscar_assinantes_ativos
 
 # Carregar variáveis de ambiente
 load_dotenv()
 
-def renderizar_newsletter(vagas, token_usuario=''):
+def renderizar_newsletter(vagas, vagas_ativas, token_usuario=''):
     """Renderiza template HTML com Jinja2"""
     # Configurar Jinja2 para buscar templates
     template_dir = os.path.join('src', 'templates')
@@ -28,6 +28,8 @@ def renderizar_newsletter(vagas, token_usuario=''):
         data_hoje=datetime.now().strftime('%d/%m/%Y'),
         total_vagas=len(vagas),
         vagas=vagas,
+        vagas_ativas=vagas_ativas,
+        total_vagas_ativas=len(vagas_ativas),
         token=token_usuario
     )
 
@@ -48,6 +50,7 @@ def enviar_emails(teste=False):
     # Buscar assinantes e vagas
     assinantes = buscar_assinantes_ativos()
     vagas = buscar_vagas_recentes(dias=1)
+    vagas_ativas = buscar_vagas_ativas()
     
     if not assinantes:
         print("⚠️ Nenhum assinante ativo encontrado")
@@ -55,6 +58,7 @@ def enviar_emails(teste=False):
     
     print(f"\n📧 Preparando envio para {len(assinantes)} assinantes...")
     print(f"🚀 {len(vagas)} vagas encontradas hoje")
+    print(f"📋 {len(vagas_ativas)} vagas ativas no total")
     
     # Estatísticas
     stats = contar_vagas_por_origem()
@@ -74,7 +78,7 @@ def enviar_emails(teste=False):
     erros = 0
     
     for assinante in assinantes:
-        html = renderizar_newsletter(vagas, assinante['token'])
+        html = renderizar_newsletter(vagas, vagas_ativas, assinante['token'])
         
         try:
             params = {
