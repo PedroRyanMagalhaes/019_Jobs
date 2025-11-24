@@ -57,6 +57,32 @@
                         </td>
                     </tr>
 
+                    {% if total_vagas_ativas > 0 %}
+                    <tr>
+                        <td style="padding: 0 40px;">
+                            <div style="height: 1px; background: linear-gradient(90deg, #bd93f9 0%, transparent 100%); opacity: 0.3; margin: 20px 0;"></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding: 0 40px 20px 40px; text-align: left;">
+                            <p style="color: #6279c0; margin: 0; font-size: 18px; text-transform: uppercase; letter-spacing: 2px;">
+                                VAGAS ATIVAS • {{ total_vagas_ativas }} OPORTUNIDADES
+                            </p>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding: 0 40px 40px 40px;">
+                            
+                            {% for vaga in vagas_ativas %}
+                                {% include 'vaga_card.html' %}
+                            {% endfor %}
+
+                        </td>
+                    </tr>
+                    {% endif %}
+
                     <tr>
                         <td style="background-color: #13131a; padding: 30px; text-align: center; border-top: 1px solid #1f202e;">
                             <p style="color: #44475a; font-size: 11px; margin: 0; line-height: 1.6;">

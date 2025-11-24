@@ -53,6 +53,48 @@ def buscar_vagas_recentes(dias=1):
         conn.close()
         return []
 
+def buscar_vagas_ativas():
+    """
+    Busca todas as vagas tech ativas (exceto as de hoje)
+    
+    Returns:
+        Lista de dicionários com dados das vagas ativas
+    """
+    if not os.path.exists(DB_PATH):
+        print(f"❌ Banco não encontrado: {DB_PATH}")
+        return []
+    
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    # Buscar vagas tech que NÃO são de hoje (vagas ativas antigas)
+    query = """
+    SELECT titulo, empresa, localizacao, url_vaga, data_coleta, classificacao_funil
+    FROM vagas_filtradas 
+    WHERE classificacao_funil IN ('tech funil', 'tech IA')
+    AND date(data_coleta) < date('now')
+    ORDER BY data_coleta DESC
+    """
+    
+    try:
+        cursor.execute(query)
+        vagas = cursor.fetchall()
+        conn.close()
+        
+        return [{
+            'titulo': v[0],
+            'empresa': v[1],
+            'localizacao': v[2] if v[2] else 'Não especificado',
+            'link': v[3],
+            'data': v[4],
+            'origem': v[5]
+        } for v in vagas]
+    
+    except sqlite3.OperationalError as e:
+        print(f"❌ Erro ao buscar vagas ativas: {e}")
+        conn.close()
+        return []
+
 def contar_vagas_por_origem():
     """Conta quantas vagas vieram do filtro vs IA"""
     if not os.path.exists(DB_PATH):
