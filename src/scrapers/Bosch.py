@@ -33,55 +33,61 @@ def raspar():
             page.wait_for_load_state('domcontentloaded')
 
             print("Procurando pela seção de vagas de Campinas...")
-            # --- CORREÇÃO APLICADA AQUI ---
-            # Adicionada a classe .openings-section para especificar o seletor
-            campinas_section = page.locator("section.openings-section:has(h3:has-text('Campinas, Brasil'))")
+            # Busca todas as seções de Campinas (pode haver múltiplas devido a capitalização diferente)
+            campinas_sections = page.locator("section.openings-section").filter(has_text="Campinas, Brasil")
             
-            if not campinas_section.is_visible():
+            sections_count = campinas_sections.count()
+            if sections_count == 0:
                 print("⚠️ Seção de Campinas não encontrada na página. Encerrando scraper da Bosch.")
                 browser.close()
                 return []
             
-            print("✅ Seção de Campinas encontrada.")
+            print(f"✅ {sections_count} seção(ões) de Campinas encontrada(s).")
 
-            while True:
-                try:
-                    show_more_button = campinas_section.get_by_role("link", name="Mostrar mais empregos")
-                    
-                    if show_more_button.is_visible(timeout=5000):
-                        print("Carregando mais vagas...")
-                        show_more_button.click()
-                        time.sleep(random.uniform(1.5, 2.5))
-                    else:
-                        print("Botão 'Mostrar mais' não está mais visível.")
+            # Processa cada seção de Campinas encontrada
+            for section_index in range(sections_count):
+                campinas_section = campinas_sections.nth(section_index)
+                print(f"\n--- Processando seção {section_index + 1} de {sections_count} ---")
+                
+                # Clica em "Mostrar mais" para carregar todas as vagas desta seção
+                while True:
+                    try:
+                        show_more_button = campinas_section.get_by_role("link", name="Mostrar mais empregos")
+                        
+                        if show_more_button.is_visible(timeout=5000):
+                            print("Carregando mais vagas...")
+                            show_more_button.click()
+                            time.sleep(random.uniform(1.5, 2.5))
+                        else:
+                            print("Botão 'Mostrar mais' não está mais visível.")
+                            break
+                    except Exception:
+                        print("Todas as vagas desta seção foram carregadas.")
                         break
-                except Exception:
-                    print("Todas as vagas de Campinas foram carregadas.")
-                    break
 
-            print("Coletando informações das vagas...")
-            lista_vagas_li = campinas_section.locator("li.opening-job")
-            count = lista_vagas_li.count()
-            print(f"Encontrados {count} elementos de vagas.")
+                print("Coletando informações das vagas...")
+                lista_vagas_li = campinas_section.locator("li.opening-job")
+                count = lista_vagas_li.count()
+                print(f"Encontrados {count} elementos de vagas nesta seção.")
 
-            for i in range(count):
-                vaga_li = lista_vagas_li.nth(i)
-                
-                titulo_vaga_element = vaga_li.locator("h4.job-title")
-                link_vaga_element = vaga_li.locator("a.link--block")
-                
-                titulo = titulo_vaga_element.inner_text().strip()
-                url_vaga = link_vaga_element.get_attribute('href')
-                
-                dados_vaga = {
-                    "empresa": "Bosch",
-                    "titulo": titulo,
-                    "localizacao": "Campinas",
-                    "modelo_trabalho": "Hibrido",
-                    "url_vaga": url_vaga,
-                }
-                vagas_encontradas.append(dados_vaga)
-                print(f"  - Vaga coletada: {titulo}")
+                for i in range(count):
+                    vaga_li = lista_vagas_li.nth(i)
+                    
+                    titulo_vaga_element = vaga_li.locator("h4.job-title")
+                    link_vaga_element = vaga_li.locator("a.link--block")
+                    
+                    titulo = titulo_vaga_element.inner_text().strip()
+                    url_vaga = link_vaga_element.get_attribute('href')
+                    
+                    dados_vaga = {
+                        "empresa": "Bosch",
+                        "titulo": titulo,
+                        "localizacao": "Campinas",
+                        "modelo_trabalho": "Hibrido",
+                        "url_vaga": url_vaga,
+                    }
+                    vagas_encontradas.append(dados_vaga)
+                    print(f"  - Vaga coletada: {titulo}")
 
         except TimeoutError:
             print(f"❌ Timeout ao tentar carregar a página: {url}")
