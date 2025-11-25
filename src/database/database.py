@@ -167,6 +167,7 @@ def finalizar_ciclo_scraping():
     """
     Finaliza o ciclo de scraping e move vagas não encontradas para o banco de removidas.
     Deve ser chamada após terminar o scraping de todas as empresas.
+    Remove vagas tanto do vagas.db quanto do vagas_filtradas.db
     """
     print("🧹 Finalizando ciclo de scraping e limpando vagas antigas...")
     
@@ -185,6 +186,9 @@ def finalizar_ciclo_scraping():
             
         # Remover do banco principal
         _remover_vagas_antigas(data_hoje)
+        
+        # Remover também do banco filtrado
+        _remover_do_banco_filtrado(data_hoje)
         
         print(f"✅ {len(vagas_para_remover)} vagas movidas para banco de removidas")
     else:
@@ -264,6 +268,47 @@ def _remover_vagas_antigas(data_hoje):
         
     except sqlite3.Error as e:
         print(f"❌ Erro ao remover vagas antigas: {e}")
+    finally:
+        if conexao:
+            conexao.close()
+
+def _remover_do_banco_filtrado(data_hoje):
+    """Remove vagas antigas do banco filtrado que não estão mais no banco principal"""
+    conexao = None
+    try:
+        db_filtrado = DB_FILE.replace('vagas.db', 'vagas_filtradas.db')
+        
+        # Verifica se o banco filtrado existe
+        if not os.path.exists(db_filtrado):
+            return
+            
+        # Buscar URLs que ainda estão no banco principal
+        conexao_principal = sqlite3.connect(DB_FILE)
+        cursor_principal = conexao_principal.cursor()
+        cursor_principal.execute("SELECT url_vaga FROM vagas")
+        urls_ativas = {row[0] for row in cursor_principal.fetchall()}
+        conexao_principal.close()
+        
+        # Remover do banco filtrado as vagas que não estão mais no principal
+        conexao = sqlite3.connect(db_filtrado)
+        cursor = conexao.cursor()
+        
+        cursor.execute("SELECT url_vaga FROM vagas_filtradas")
+        vagas_filtradas = cursor.fetchall()
+        
+        removidas = 0
+        for (url,) in vagas_filtradas:
+            if url not in urls_ativas:
+                cursor.execute("DELETE FROM vagas_filtradas WHERE url_vaga = ?", (url,))
+                removidas += 1
+        
+        conexao.commit()
+        
+        if removidas > 0:
+            print(f"🧹 {removidas} vagas removidas do banco filtrado")
+        
+    except sqlite3.Error as e:
+        print(f"❌ Erro ao remover vagas do banco filtrado: {e}")
     finally:
         if conexao:
             conexao.close()
