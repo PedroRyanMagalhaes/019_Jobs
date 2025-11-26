@@ -24,12 +24,11 @@ def buscar_vagas_recentes(dias=1):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
-    # Buscar APENAS vagas tech coletadas HOJE (data_coleta = hoje)
+    # Buscar APENAS vagas coletadas HOJE (data_coleta = hoje)
     query = """
     SELECT titulo, empresa, localizacao, url_vaga, data_coleta, classificacao_funil
     FROM vagas_filtradas 
-    WHERE classificacao_funil IN ('tech funil', 'tech IA')
-    AND date(data_coleta) = date('now')
+    WHERE date(data_coleta) = date('now', 'localtime')
     ORDER BY data_coleta DESC
     """
     
@@ -66,12 +65,11 @@ def buscar_vagas_ativas():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
-    # Buscar vagas tech que NÃO são de hoje (vagas ativas antigas)
+    # Buscar vagas que NÃO são de hoje (vagas ativas antigas)
     query = """
     SELECT titulo, empresa, localizacao, url_vaga, data_coleta, classificacao_funil
     FROM vagas_filtradas 
-    WHERE classificacao_funil IN ('tech funil', 'tech IA')
-    AND date(data_coleta) < date('now')
+    WHERE date(data_coleta) < date('now', 'localtime')
     ORDER BY data_coleta DESC
     """
     
