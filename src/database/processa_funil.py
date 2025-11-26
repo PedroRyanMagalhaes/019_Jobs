@@ -1,20 +1,28 @@
 import sqlite3
 import json
 import requests
+from datetime import date
 from config.settings import GEMINI_API_KEY, DB_FILE
 from src.filtro_funil import filtrar_por_palavras_chave, agrupar_duvidas
 
-# Função para ler todas as vagas do banco
+# Função para ler as vagas coletadas hoje
 
-def ler_vagas_completas(db_path):
+def ler_vagas_do_dia(db_path):
+    """
+    Retorna todas as vagas coletadas hoje.
+    Essas serão processadas pelo Gemini para classificação.
+    """
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM vagas')
-    vagas = cursor.fetchall()
-    # Obter nomes das colunas
+    
+    # Buscar vagas coletadas hoje
+    data_hoje = date.today().isoformat()
+    cursor.execute('SELECT * FROM vagas WHERE data_coleta = ?', (data_hoje,))
+    vagas_hoje = cursor.fetchall()
     colunas = [desc[0] for desc in cursor.description]
     conn.close()
-    return vagas, colunas
+    
+    return vagas_hoje, colunas
 
 # Função para criar banco vagas_filtradas com mesma estrutura + classificação
 
@@ -22,16 +30,14 @@ def criar_banco_filtrado(db_path):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     
-    # Primeiro, apagar tabela se existir para recriar corretamente
-    cursor.execute('DROP TABLE IF EXISTS vagas_filtradas')
-    
-    cursor.execute('''CREATE TABLE vagas_filtradas (
+    # Criar tabela apenas se não existir (preserva dados existentes)
+    cursor.execute('''CREATE TABLE IF NOT EXISTS vagas_filtradas (
         id INTEGER PRIMARY KEY,
         empresa TEXT NOT NULL,
         titulo TEXT NOT NULL,
         localizacao TEXT,
         modelo_trabalho TEXT,
-        url_vaga TEXT NOT NULL,
+        url_vaga TEXT NOT NULL UNIQUE,
         classificacao_ia TEXT,
         data_coleta TEXT NOT NULL,
         ultima_atualizacao TEXT NOT NULL,
@@ -111,18 +117,26 @@ Títulos para classificar:
         print(f"❌ Erro ao chamar Gemini API: {e}")
         return {}
 
+# Função auxiliar para remover vagas do banco filtrado que não estão mais no banco principal
+# (REMOVIDA - agora essa lógica está no database.py na função finalizar_ciclo_scraping)
+
 # Funil completo
 
 def processar_funil():
     print("🔄 Iniciando processamento do Funil Inteligente...")
     
-    # Ler todas as vagas do banco principal
-    vagas, colunas = ler_vagas_completas(DB_FILE)
-    print(f"📊 {len(vagas)} vagas encontradas no banco principal")
-    
-    # Criar banco filtrado
+    # Criar/verificar banco filtrado
     db_filtrado = DB_FILE.replace('vagas.db', 'vagas_filtradas.db')
     criar_banco_filtrado(db_filtrado)
+    
+    # Ler todas as vagas coletadas HOJE
+    vagas, colunas = ler_vagas_do_dia(DB_FILE)
+    
+    if not vagas:
+        print("✅ Nenhuma vaga coletada hoje para processar!")
+        return
+    
+    print(f"📊 {len(vagas)} vagas coletadas HOJE para processar")
     
     # Separar por tipo
     aprovadas_direto = []

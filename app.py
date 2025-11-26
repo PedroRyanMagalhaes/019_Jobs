@@ -91,9 +91,22 @@ def main():
     try:
         from src.database.processa_funil import processar_funil
         processar_funil()
-        print("Funil Inteligente executado com sucesso. Resultados salvos em vagas_filtradas.db.")
+        print("✅ Funil Inteligente executado com sucesso. Resultados salvos em vagas_filtradas.db.")
     except Exception as e:
         print(f"❌ Erro ao executar o Funil Inteligente: {e}")
+    
+    # Passo final: Enviar Newsletter
+    print("\n--- PASSO FINAL: Enviando Newsletter ---")
+    try:
+        from src.newsletter.enviar_newsletter import enviar_emails
+        enviar_emails(teste=False)  # Mude para teste=True se quiser testar primeiro
+        print("✅ Newsletter enviada com sucesso!")
+    except Exception as e:
+        print(f"❌ Erro ao enviar newsletter: {e}")
+    
+    print("\n==============================================")
+    print("🎉 PROCESSO COMPLETO FINALIZADO COM SUCESSO!")
+    print("==============================================")
     
 if __name__ == "__main__":
     main()
