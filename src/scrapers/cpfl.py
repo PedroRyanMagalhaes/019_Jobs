@@ -1,5 +1,11 @@
 #TODO: NÂO TA INDO PARA PAGINA 2 DAS VAGAS QUANDO TEM
 
+# Ajusta o path quando executado diretamente
+if __name__ == "__main__":
+    import sys
+    from pathlib import Path
+    root_dir = Path(__file__).parent.parent.parent
+    sys.path.insert(0, str(root_dir))
 
 import time
 from playwright.sync_api import sync_playwright, TimeoutError

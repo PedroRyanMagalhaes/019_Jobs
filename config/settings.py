@@ -24,12 +24,12 @@ SCRAPER_CONFIG = {
 }
 
 
-# URLs das empresas
+# URLs das empresasbe
 EMPRESA_URLS = {
     "Bosch": "https://careers.smartrecruiters.com/BoschGroup/brazil",
     "Cpfl": "https://vagas.cpfl.com.br/search",
     "Ciandt": "https://ciandt.com/br/pt-br/carreiras/oportunidades",
-    "Johndeere": "https://careers.deere.com/careers?location=Brazil",
+    "Johndeere": "https://careers.deere.com/careers?start=0&location=Brazil&pid=137479995061&sort_by=timestamp&filter_include_remote=1",
     "Enforce": "https://job-boards.greenhouse.io/enforce",
     "Dell": "https://jobs.dell.com/pt-br/busca-de-vagas/Hortol%C3%A2ndia%2C%20S%C3%A3o%20Paulo/375/4/3469034-3448433-6322273-3461655/-22x85833/-47x22/50/2",
     "Lenovo": "https://jobs.lenovo.com/en_US/careers/SearchJobs/?13036=%5B12016606%5D&13036_format=6621&13037=%5B12019986%5D&13037_format=6622&listFilterMode=1&jobRecordsPerPage=10&",
@@ -62,3 +62,4 @@ SCRAPERS_ATIVOS = [
 
 # Configuração da Gemini API
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "SUA_API_KEY_AQUI")  # Lê do arquivo .env
+    

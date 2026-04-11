@@ -1,5 +1,11 @@
-#To Do : Não está pegando todos os links até o ultima vaga
+# Scraper atualizado para a nova estrutura do site John Deere (2026)
 
+# Ajusta o path quando executado diretamente
+if __name__ == "__main__":
+    import sys
+    from pathlib import Path
+    root_dir = Path(__file__).parent.parent.parent
+    sys.path.insert(0, str(root_dir))
 
 import time
 from playwright.sync_api import sync_playwright, TimeoutError
@@ -8,7 +14,7 @@ import os
 
 def raspar():
     """
-    VERSÃO FINAL: Separa a fase de carregamento da fase de extração para máxima estabilidade.
+    VERSÃO ATUALIZADA: Adaptado para a nova estrutura do site John Deere.
     """
     
     url = EMPRESA_URLS.get("Johndeere")
@@ -17,9 +23,9 @@ def raspar():
         return []
 
     vagas_para_salvar = []
-    base_url = "https://careers.deere.com/careers/jobs/"
+    base_url = "https://careers.deere.com"
 
-    print(f"Iniciando scraper para a John Deere em {url} (Modo Estável)")
+    print(f"Iniciando scraper para a John Deere em {url}")
 
     with sync_playwright() as p:
         browser = p.chromium.launch(
@@ -33,63 +39,108 @@ def raspar():
         page = context.new_page()
         
         try:
-            # --- FASE 1: CARREGAR TODAS AS VAGAS ---
+            # --- NAVEGAÇÃO E EXTRAÇÃO POR PÁGINA ---
             page.goto(url, wait_until="networkidle", timeout=SCRAPER_CONFIG.get("timeout", 60000))
             print("✅ Página carregada.")
-
-            scroll_container_selector = "div.position-sidebar-scroll-handler"
+            time.sleep(2)  # Aguarda carregamento inicial
             
-            print("Iniciando processo de scroll e clique para carregar tudo...")
+            pagina_numero = 1
+            
             while True:
-                try:
-                    vagas_antes = page.locator('div.position-card').count()
-                    page.locator(scroll_container_selector).hover()
-                    for _ in range(5):
-                        page.mouse.wheel(0, 1000)
-                        time.sleep(1)
+                print(f"\n{'='*50}")
+                print(f"PROCESSANDO PÁGINA {pagina_numero}")
+                print(f"{'='*50}\n")
+                
+                # Aguarda os cards carregarem
+                page.wait_for_selector('div.cardContainer-GcY1a', timeout=10000)
+                time.sleep(1)
+                
+                # Extrai vagas da página atual
+                cards = page.locator('div.cardContainer-GcY1a').all()
+                print(f"Encontrados {len(cards)} cards nesta página.\n")
+
+                for i, card in enumerate(cards):
+                    try:
+                        # Extrai título
+                        titulo_elem = card.locator('div.title-1aNJK')
+                        if titulo_elem.count() == 0:
+                            continue
+                        titulo = titulo_elem.inner_text()
+                        
+                        # Extrai localização
+                        localizacao_elem = card.locator('div.fieldValue-3kEar').first
+                        if localizacao_elem.count() == 0:
+                            continue
+                        localizacao = localizacao_elem.inner_text()
+                        
+                        # Filtra apenas Indaiatuba e Campinas
+                        local_lower = localizacao.lower()
+                        if 'indaiatuba' not in local_lower and 'campinas' not in local_lower:
+                            continue
+
+                        print(f"  ✓ {titulo}")
+                        
+                        # Extrai URL da vaga
+                        link_elem = card.locator('a.card-F1ebU')
+                        url_vaga = "Link não disponível"
+                        if link_elem.count() > 0:
+                            href = link_elem.get_attribute('href')
+                            if href:
+                                url_vaga = base_url + href if href.startswith('/') else href
+                        
+                        # Extrai modelo de trabalho (se existir o selo)
+                        modelo = "Híbrido"  # Padrão
+                        modelo_elem = card.locator('span.pills-module_label__yj2be')
+                        if modelo_elem.count() > 0:
+                            modelo = modelo_elem.inner_text()
+
+                        dados_vaga = {
+                            "empresa": "John Deere",
+                            "titulo": titulo,
+                            "localizacao": localizacao,
+                            "modelo_trabalho": modelo,
+                            "url_vaga": url_vaga
+                        }
+                        vagas_para_salvar.append(dados_vaga)
+                        
+                    except Exception as e:
+                        print(f"  [AVISO] Erro ao processar card {i+1}: {e}")
+                        continue
+                
+                # Verifica paginação
+                pager = page.locator('div.pagination-module_page-tracker__Dhok2 span')
+                if pager.count() >= 3:
+                    pagina_atual = pager.nth(0).inner_text()
+                    total_paginas = pager.nth(2).inner_text()
+                    print(f"\n📄 Página {pagina_atual} de {total_paginas}")
                     
-                    show_more_button = page.locator('button.show-more-positions')
-                    if show_more_button.count() == 0:
+                    if pagina_atual == total_paginas:
+                        print("✅ Última página confirmada!")
                         break
-
-                    show_more_button.click(timeout=7000)
-                    page.locator(f'div.position-card >> nth={vagas_antes}').wait_for(timeout=10000)
-                except Exception:
-                    print("Fim do carregamento de vagas.")
+                
+                # Verifica se há próxima página - botão com seletor mais robusto
+                next_button = page.locator('button.pagination-module_pagination-next__OHCf9')
+                
+                if next_button.count() == 0:
+                    print("\n✅ Botão 'Next' não encontrado. Fim da navegação.")
                     break
-
-            # --- FASE 2: EXTRAIR DADOS UMA VAGA DE CADA VEZ ---
-            print("\nIniciando extração de dados...")
-            total_vagas = page.locator('div.position-card').count()
-            print(f"Analisando {total_vagas} vagas encontradas.")
-
-            for i in range(total_vagas):
-                time.sleep(0.3)  # Pequena pausa para estabilidade
-                card = page.locator('div.position-card').nth(i)
                 
-                titulo = card.locator('div.position-title').inner_text()
-                localizacao = card.locator('p.position-location').inner_text()
+                is_disabled = next_button.get_attribute('aria-disabled')
+                if is_disabled == 'true':
+                    print("\n✅ Última página alcançada (botão desabilitado).")
+                    break
                 
-                local_lower = localizacao.lower()
-                if 'indaiatuba' not in local_lower and 'campinas' not in local_lower:
-                    continue
-
-                print(f"Processando vaga {i+1}/{total_vagas}: {titulo}...")
-                
-                url_vaga = "Link não disponível"
+                # Faz scroll até o botão e clica
+                print("\n➡️  Avançando para próxima página...")
                 try:
-                    card.click(timeout=5000)
-                    page.wait_for_url('**/*pid=*', timeout=5000)
-                    url_vaga = page.url
-                except Exception:
-                    print(f"  [AVISO] Não foi possível obter o link para esta vaga.")
-                
-                modelo = "Híbrido" 
-                if card.locator('span.pills-module_label__yj2be').count() > 0:
-                    modelo = card.locator('span.pills-module_label__yj2be').inner_text()
-
-                dados_vaga = { "empresa": "John Deere", "titulo": titulo, "localizacao": localizacao, "modelo_trabalho": modelo, "url_vaga": url_vaga }
-                vagas_para_salvar.append(dados_vaga)
+                    next_button.scroll_into_view_if_needed()
+                    time.sleep(0.5)
+                    next_button.click()
+                    time.sleep(2.5)  # Aguarda carregamento
+                    pagina_numero += 1
+                except Exception as e:
+                    print(f"❌ Erro ao clicar no botão Next: {e}")
+                    break
             
         except Exception as e:
             print(f"❌ Ocorreu um erro crítico: {e}")
@@ -98,7 +149,7 @@ def raspar():
                 browser.close()
             print("Scraper finalizado.")
 
-    print(f"\nAnálise finalizada. {len(vagas_para_salvar)} vagas selecionadas para salvar.")
+    print(f"\n✅ Análise finalizada. {len(vagas_para_salvar)} vagas selecionadas para salvar.")
     return vagas_para_salvar
 
 # --- BLOCO DE TESTE ---
