@@ -39,7 +39,9 @@ EMPRESA_URLS = {
     "Sensedia": "https://sensedia.hire.trakstar.com/",
     "Ambevtech": "https://ambevtech.gupy.io/",
     "Kumulus": "https://jobs.quickin.io/kumulus/jobs",
-    "Ifood": "https://carreiras.ifood.com.br/jobs/"
+    "Ifood": "https://carreiras.ifood.com.br/jobs/",
+    "Ibm": "https://www.ibm.com/br-pt/careers/search?field_keyword_05[0]=Brazil&p=1",
+    "Samsung": "https://sec.wd3.myworkdayjobs.com/Samsung_Careers?Location_Country=1a29bb1357b240ab99a2fa755cc87c0e"
 }
 
 # Lista de scrapers ativos
@@ -58,6 +60,8 @@ SCRAPERS_ATIVOS = [
     ("Ambevtech", "Ambevtech"),
     ("Kumulus", "Kumulus"),
     ("Ifood", "Ifood"),
+    ("Ibm", "IBM"),
+    ("Samsung", "Samsung"),
 ]
 
 # Configuração da Gemini API
