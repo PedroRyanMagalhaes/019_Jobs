@@ -44,7 +44,8 @@ EMPRESA_URLS = {
     "Samsung": "https://sec.wd3.myworkdayjobs.com/Samsung_Careers?Location_Country=1a29bb1357b240ab99a2fa755cc87c0e",
     "Motorola": "https://motorolasolutions.wd5.myworkdayjobs.com/Careers?timeType=d6565dafd0ce4473932b0ce1ce9a0307",
     "Eldorado": "https://institutoeldorado.gupy.io/",
-    "Huawei": "https://career.huawei.com/reccampportal/la/recruitment.html?as=Experienced&jobType=&country=Brazil&city="
+    "Huawei": "https://career.huawei.com/reccampportal/la/recruitment.html?as=Experienced&jobType=&country=Brazil&city=",
+    "Generalmotors": "https://search-careers.gm.com/pt/cargos/?search=&country=Brazil&pagesize=20#results"
 }
 
 # Lista de scrapers ativos
@@ -68,6 +69,7 @@ SCRAPERS_ATIVOS = [
     ("Motorola", "Motorola"),
     ("Eldorado", "Eldorado"),
     ("Huawei", "Huawei"),
+    ("Generalmotors", "General Motors"),
 ]
 
 # Configuração da Gemini API

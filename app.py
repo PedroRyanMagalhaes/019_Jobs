@@ -18,6 +18,7 @@ from src.scrapers import Samsung
 from src.scrapers import Motorola
 from src.scrapers import Eldorado
 from src.scrapers import Huawei
+from src.scrapers import Generalmotors
 from config.settings import SCRAPERS_ATIVOS
 
 # Mapeamento de nomes para módulos
@@ -40,7 +41,8 @@ SCRAPERS_MAP = {
     "Samsung": Samsung,
     "Motorola": Motorola,
     "Eldorado": Eldorado,
-    "Huawei": Huawei
+    "Huawei": Huawei,
+    "Generalmotors": Generalmotors
 }
 
 # Criar lista de scrapers a partir das configurações
