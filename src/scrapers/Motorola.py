@@ -12,20 +12,20 @@ from config.settings import EMPRESA_URLS, SCRAPER_CONFIG
 
 def raspar():
     """
-    Realiza o scraping das vagas da Samsung usando Playwright + BeautifulSoup.
+    Realiza o scraping das vagas da Motorola usando Playwright + BeautifulSoup.
     - Carrega a página com Playwright para aguardar renderização JS
     - Extrai informações com BeautifulSoup
     - Filtra vagas de Campinas, Brazil
     """
     
-    url = EMPRESA_URLS.get("Samsung")
+    url = EMPRESA_URLS.get("Motorola")
     if not url:
-        print("❌ URL da Samsung não encontrada nas configurações.")
+        print("❌ URL da Motorola não encontrada nas configurações.")
         return []
 
     vagas_para_salvar = []
 
-    print(f"Iniciando scraper para a Samsung em {url}")
+    print(f"Iniciando scraper para a Motorola em {url}")
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=SCRAPER_CONFIG.get("headless", True))
@@ -74,7 +74,7 @@ def raspar():
                         
                         # Monta URL completa
                         if url_relativa.startswith('/'):
-                            url_vaga = f"https://sec.wd3.myworkdayjobs.com{url_relativa}"
+                            url_vaga = f"https://motorolasolutions.wd5.myworkdayjobs.com{url_relativa}"
                         else:
                             url_vaga = url_relativa
                         
@@ -86,31 +86,47 @@ def raspar():
                             if location_dd:
                                 localizacao = location_dd.get_text(strip=True)
                         
-                        # Tipo de trabalho (Remote Type)
-                        remote_div = item.find('div', {'data-automation-id': 'remoteType'})
-                        modelo_trabalho = "Presencial"
-                        if remote_div:
-                            remote_dd = remote_div.find('dd', class_='css-129m7dg')
-                            if remote_dd:
-                                tipo_remote = remote_dd.get_text(strip=True)
-                                if 'Remote' in tipo_remote:
-                                    modelo_trabalho = "Remoto"
-                                elif 'Hybrid' in tipo_remote:
-                                    modelo_trabalho = "Híbrido"
-                                elif 'On-site' in tipo_remote:
-                                    modelo_trabalho = "Presencial"
-                        
-                        # Filtro de localização - só Campinas
+                        # Filtro de localização - Campinas, Jaguariúna, Brazil Offsite, Brazil Remote
                         if not localizacao:
                             continue
                         
                         local_lower = localizacao.lower()
-                        if 'campinas' not in local_lower:
+                        
+                        # Verifica se é uma vaga válida
+                        eh_valida = False
+                        modelo_trabalho = "Presencial"
+                        
+                        # Brazil Offsite ou Brazil Remote Work → Remoto
+                        if 'brazil offsite' in local_lower or 'brazil remote work' in local_lower:
+                            eh_valida = True
+                            modelo_trabalho = "Remoto"
+                        # Campinas → Presencial (ou verificar se tem remoteType)
+                        elif 'campinas' in local_lower:
+                            eh_valida = True
+                            # Verifica se tem campo remoteType
+                            remote_div = item.find('div', {'data-automation-id': 'remoteType'})
+                            if remote_div:
+                                remote_dd = remote_div.find('dd', class_='css-129m7dg')
+                                if remote_dd:
+                                    tipo_remote = remote_dd.get_text(strip=True)
+                                    if 'Remote' in tipo_remote:
+                                        modelo_trabalho = "Remoto"
+                                    elif 'Hybrid' in tipo_remote:
+                                        modelo_trabalho = "Híbrido"
+                                    elif 'On-site' in tipo_remote:
+                                        modelo_trabalho = "Presencial"
+                        # Jaguariúna → Híbrido
+                        elif 'jaguariuna' in local_lower or 'jaguariúna' in local_lower:
+                            eh_valida = True
+                            modelo_trabalho = "Híbrido"
+                        
+                        # Se não é válida, pula
+                        if not eh_valida:
                             continue
                         
                         # Monta o dicionário da vaga
                         dados_vaga = {
-                            "empresa": "Samsung",
+                            "empresa": "Motorola",
                             "titulo": titulo,
                             "localizacao": localizacao,
                             "modelo_trabalho": modelo_trabalho,
@@ -147,13 +163,13 @@ def raspar():
                 browser.close()
             print("Fase de captura do Playwright finalizada.")
     
-    print(f"\n✅ Total de vagas coletadas da Samsung: {len(vagas_para_salvar)}")
+    print(f"\n✅ Total de vagas coletadas da Motorola: {len(vagas_para_salvar)}")
     return vagas_para_salvar
 
 
 # Bloco para execução direta (útil para testes)
 if __name__ == "__main__":
-    print("=== TESTE DO SCRAPER SAMSUNG ===\n")
+    print("=== TESTE DO SCRAPER MOTOROLA ===\n")
     vagas = raspar()
     
     print("\n=== RESULTADO ===")

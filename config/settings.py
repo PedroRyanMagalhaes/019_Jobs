@@ -41,7 +41,9 @@ EMPRESA_URLS = {
     "Kumulus": "https://jobs.quickin.io/kumulus/jobs",
     "Ifood": "https://carreiras.ifood.com.br/jobs/",
     "Ibm": "https://www.ibm.com/br-pt/careers/search?field_keyword_05[0]=Brazil&p=1",
-    "Samsung": "https://sec.wd3.myworkdayjobs.com/Samsung_Careers?Location_Country=1a29bb1357b240ab99a2fa755cc87c0e"
+    "Samsung": "https://sec.wd3.myworkdayjobs.com/Samsung_Careers?Location_Country=1a29bb1357b240ab99a2fa755cc87c0e",
+    "Motorola": "https://motorolasolutions.wd5.myworkdayjobs.com/Careers?timeType=d6565dafd0ce4473932b0ce1ce9a0307",
+    "Eldorado": "https://institutoeldorado.gupy.io/"
 }
 
 # Lista de scrapers ativos
@@ -62,6 +64,8 @@ SCRAPERS_ATIVOS = [
     ("Ifood", "Ifood"),
     ("Ibm", "IBM"),
     ("Samsung", "Samsung"),
+    ("Motorola", "Motorola"),
+    ("Eldorado", "Eldorado"),
 ]
 
 # Configuração da Gemini API
