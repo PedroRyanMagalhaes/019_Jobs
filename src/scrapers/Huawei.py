@@ -264,31 +264,4 @@ def raspar():
     return vagas_para_salvar
 
 # --- BLOCO DE TESTE ---
-if __name__ == "__main__":
-    from src.database import database
-    
-    os.makedirs("src/database", exist_ok=True)
-    TEST_DB_FILE = "src/database/vagasteste.db"
-    database.DB_FILE = TEST_DB_FILE
-    
-    print(f"--- EXECUTANDO SCRAPER DA HUAWEI EM MODO DE TESTE ---")
-    
-    database.inicializar_banco()
-    conn = database.sqlite3.connect(TEST_DB_FILE)
-    conn.execute("DELETE FROM vagas WHERE empresa = 'Huawei'")
-    conn.commit()
-    conn.close()
-    
-    vagas_coletadas = raspar()
 
-    if vagas_coletadas:
-        print(f"\n✅ SUCESSO! {len(vagas_coletadas)} vagas da Huawei selecionadas.")
-        novas_vagas_salvas = 0
-        for vaga in vagas_coletadas:
-            if database.salvar_vaga(vaga):
-                novas_vagas_salvas += 1
-        print(f"\nResumo: {novas_vagas_salvas} novas vagas salvas em '{TEST_DB_FILE}'.")
-    else:
-        print("\n❌ Nenhuma vaga da Huawei foi selecionada no teste.")
-        print("\n⚠️ ATENÇÃO: O scraper pode precisar de ajustes nos seletores HTML.")
-        print("Execute o scraper e verifique o arquivo 'huawei_debug.html' gerado para identificar os seletores corretos.")

@@ -167,18 +167,4 @@ def raspar():
     return vagas_para_salvar
 
 
-# Bloco para execução direta (útil para testes)
-if __name__ == "__main__":
-    print("=== TESTE DO SCRAPER MOTOROLA ===\n")
-    vagas = raspar()
-    
-    print("\n=== RESULTADO ===")
-    print(f"Total de vagas encontradas: {len(vagas)}")
-    
-    if vagas:
-        print("\nPrimeiras vagas:")
-        for i, vaga in enumerate(vagas[:5], 1):
-            print(f"\n{i}. {vaga['titulo']}")
-            print(f"   Localização: {vaga['localizacao']}")
-            print(f"   Modelo: {vaga['modelo_trabalho']}")
-            print(f"   URL: {vaga['url_vaga']}")
+

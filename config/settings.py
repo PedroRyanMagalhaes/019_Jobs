@@ -3,7 +3,8 @@ import os
 from dotenv import load_dotenv
 
 # Carregar variáveis de ambiente do arquivo .env
-load_dotenv()
+_project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(dotenv_path=os.path.join(_project_root, ".env"))
 
 # Configurações do banco de dados
 DATABASE_CONFIG = {
@@ -48,7 +49,10 @@ EMPRESA_URLS = {
     "Generalmotors": "https://search-careers.gm.com/pt/cargos/?search=&country=Brazil&pagesize=20#results",
     "Honda": "https://honda.gupy.io/",
     "Toyota": "https://toyota.wd503.myworkdayjobs.com/pt-BR/TLAC?locations=1653f1f75d68011123afd9c942017f55&locations=1653f1f75d680169d1ecbdc6da00593a",
-    "Cnhindustrial": "https://join.cnh.com/search/?q=&markerViewed=&carouselIndex=&facetFilters=%7B%22jobLocationCountry%22%3A%5B%22Brasil%22%5D%7D&pageNumber=0"
+    "Cnhindustrial": "https://join.cnh.com/search/?q=&markerViewed=&carouselIndex=&facetFilters=%7B%22jobLocationCountry%22%3A%5B%22Brasil%22%5D%7D&pageNumber=0",
+    "Goodyear": "https://goodyear.wd1.myworkdayjobs.com/GoodyearCareers?locations=8e6033e1c034100168b54cd8fd530000",
+    "Tresm": "https://3m.wd1.myworkdayjobs.com/Search?Location_Country=1a29bb1357b240ab99a2fa755cc87c0e",
+    # "Abinbev": "https://www.linkedin.com/jobs/search?keywords=Ab%20Inbev&location=Greater%20Campinas&geoId=90009580&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0"
 }
 
 # Lista de scrapers ativos
@@ -76,8 +80,15 @@ SCRAPERS_ATIVOS = [
     ("Honda", "Honda"),
     ("Toyota", "Toyota"),
     ("Cnhindustrial", "CNH Industrial"),
+    ("Goodyear", "Goodyear"),
+    ("Tresm", "3M"),
+    # ("Abinbev", "AB InBev"),
 ]
 
 # Configuração da Gemini API
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "SUA_API_KEY_AQUI")  # Lê do arquivo .env
-    
+
+# Configurações do Supabase
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
+SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")

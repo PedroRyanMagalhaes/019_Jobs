@@ -1,5 +1,5 @@
 """
-Teste unitário para o scraper da VENTURUS
+Teste unitário para o scraper da 3M
 """
 import sys
 from pathlib import Path
@@ -9,7 +9,7 @@ import os
 root_dir = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(root_dir))
 
-from src.scrapers import Venturus
+from src.scrapers import Tresm
 
 TEST_DB_FILE = "src/database/teste.db"
 
@@ -34,11 +34,11 @@ def criar_banco_teste():
     conn.close()
 
 def test_scraper():
-    print(f"--- TESTANDO SCRAPER VENTURUS ---")
+    print(f"--- TESTANDO SCRAPER 3M ---")
     print(f"Usando banco de teste isolado: {TEST_DB_FILE}\n")
     
     criar_banco_teste()
-    vagas_coletadas = Venturus.raspar()
+    vagas_coletadas = Tresm.raspar()
 
     assert vagas_coletadas, "❌ Nenhuma vaga encontrada."
     assert len(vagas_coletadas) > 0, "Lista de vagas está vazia"

@@ -12,20 +12,22 @@ from config.settings import EMPRESA_URLS, SCRAPER_CONFIG
 
 def raspar():
     """
-    Realiza o scraping das vagas da Samsung usando Playwright + BeautifulSoup.
+    Realiza o scraping das vagas da 3M usando Playwright + BeautifulSoup.
+    - URL já filtrada para Brasil
+    - Filtra vagas apenas de Sumaré
+    - Detecta modelo de trabalho (padrão Híbrido, mas usa o que estiver na vaga)
     - Carrega a página com Playwright para aguardar renderização JS
     - Extrai informações com BeautifulSoup
-    - Filtra vagas de Campinas, Brazil
     """
     
-    url = EMPRESA_URLS.get("Samsung")
+    url = EMPRESA_URLS.get("Tresm")
     if not url:
-        print("❌ URL da Samsung não encontrada nas configurações.")
+        print("❌ URL da 3M não encontrada nas configurações.")
         return []
 
     vagas_para_salvar = []
 
-    print(f"Iniciando scraper para a Samsung em {url}")
+    print(f"Iniciando scraper para a 3M em {url}")
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=SCRAPER_CONFIG.get("headless", True))
@@ -74,43 +76,43 @@ def raspar():
                         
                         # Monta URL completa
                         if url_relativa.startswith('/'):
-                            url_vaga = f"https://sec.wd3.myworkdayjobs.com{url_relativa}"
+                            url_vaga = f"https://3m.wd1.myworkdayjobs.com{url_relativa}"
                         else:
                             url_vaga = url_relativa
                         
                         # Localização
                         location_div = item.find('div', {'data-automation-id': 'locations'})
-                        localizacao = ""
-                        if location_div:
-                            location_dd = location_div.find('dd', class_='css-129m7dg')
-                            if location_dd:
-                                localizacao = location_dd.get_text(strip=True)
+                        if not location_div:
+                            continue
                         
-                        # Tipo de trabalho (Remote Type)
+                        location_dd = location_div.find('dd', class_='css-129m7dg')
+                        if not location_dd:
+                            continue
+                        
+                        localizacao = location_dd.get_text(strip=True)
+                        
+                        # Filtro de localização - só Sumaré
+                        local_lower = localizacao.lower()
+                        if 'sumare' not in local_lower and 'sumaré' not in local_lower:
+                            continue
+                        
+                        # Tipo de trabalho (Remote Type) - padrão Híbrido
+                        modelo_trabalho = "Híbrido"
                         remote_div = item.find('div', {'data-automation-id': 'remoteType'})
-                        modelo_trabalho = "Presencial"
                         if remote_div:
                             remote_dd = remote_div.find('dd', class_='css-129m7dg')
                             if remote_dd:
                                 tipo_remote = remote_dd.get_text(strip=True)
-                                if 'Remote' in tipo_remote:
+                                if 'Remote' in tipo_remote or 'Remoto' in tipo_remote:
                                     modelo_trabalho = "Remoto"
-                                elif 'Hybrid' in tipo_remote:
+                                elif 'Hybrid' in tipo_remote or 'Híbrido' in tipo_remote or 'Hibrido' in tipo_remote:
                                     modelo_trabalho = "Híbrido"
-                                elif 'On-site' in tipo_remote:
+                                elif 'On-site' in tipo_remote or 'Presencial' in tipo_remote:
                                     modelo_trabalho = "Presencial"
-                        
-                        # Filtro de localização - só Campinas
-                        if not localizacao:
-                            continue
-                        
-                        local_lower = localizacao.lower()
-                        if 'campinas' not in local_lower:
-                            continue
                         
                         # Monta o dicionário da vaga
                         dados_vaga = {
-                            "empresa": "Samsung",
+                            "empresa": "3M",
                             "titulo": titulo,
                             "localizacao": localizacao,
                             "modelo_trabalho": modelo_trabalho,
@@ -118,7 +120,7 @@ def raspar():
                         }
                         
                         vagas_para_salvar.append(dados_vaga)
-                        print(f"  [VAGA VÁLIDA] {dados_vaga['titulo']} ({dados_vaga['localizacao']})")
+                        print(f"  [VAGA VÁLIDA] {dados_vaga['titulo']} ({dados_vaga['localizacao']}) - {modelo_trabalho}")
                         
                     except Exception as e:
                         print(f"⚠️ Erro ao processar vaga: {e}")
@@ -147,7 +149,7 @@ def raspar():
                 browser.close()
             print("Fase de captura do Playwright finalizada.")
     
-    print(f"\n✅ Total de vagas coletadas da Samsung: {len(vagas_para_salvar)}")
+    print(f"\n✅ Total de vagas coletadas da 3M: {len(vagas_para_salvar)}")
     return vagas_para_salvar
 
 

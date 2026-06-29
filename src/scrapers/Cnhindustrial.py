@@ -200,13 +200,7 @@ def raspar(headless=None):
     return vagas_para_salvar
 
 
-# Bloco para execução direta (útil para testes)
-if __name__ == "__main__":
-    print("=== TESTE DO SCRAPER CNH INDUSTRIAL ===\n")
-    vagas = raspar()
-    
-    print("\n=== RESULTADO ===")
-    print(f"Total de vagas encontradas: {len(vagas)}")
+
     
     if vagas:
         print("\nPrimeiras vagas:")

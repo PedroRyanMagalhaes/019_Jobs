@@ -1,123 +1,67 @@
 """
-Busca vagas tech do banco vagas_filtradas.db
+Busca vagas tech do Supabase (tabela vagas_filtradas)
 """
-import sqlite3
-import os
-from datetime import datetime, timedelta
+from datetime import date
+from src.database.supabase_client import get_supabase
 
-DB_PATH = os.path.join('src', 'database', 'vagas_filtradas.db')
 
 def buscar_vagas_recentes(dias=1):
     """
-    Busca vagas tech coletadas APENAS HOJE
-    
-    Args:
-        dias: Parâmetro mantido para compatibilidade (mas sempre busca só hoje)
-    
-    Returns:
-        Lista de dicionários com dados das vagas
+    Busca vagas tech coletadas APENAS HOJE.
+    O parâmetro dias é mantido por compatibilidade.
     """
-    if not os.path.exists(DB_PATH):
-        print(f"❌ Banco não encontrado: {DB_PATH}")
-        return []
-    
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    
-    # Buscar APENAS vagas coletadas HOJE (data_coleta = hoje)
-    query = """
-    SELECT titulo, empresa, localizacao, url_vaga, data_coleta, classificacao_funil
-    FROM vagas_filtradas 
-    WHERE date(data_coleta) = date('now', 'localtime')
-    ORDER BY data_coleta DESC
-    """
-    
-    try:
-        cursor.execute(query)
-        vagas = cursor.fetchall()
-        conn.close()
-        
-        return [{
-            'titulo': v[0],
-            'empresa': v[1],
-            'localizacao': v[2] if v[2] else 'Não especificado',
-            'link': v[3],
-            'data': v[4],
-            'origem': v[5]
-        } for v in vagas]
-    
-    except sqlite3.OperationalError as e:
-        print(f"❌ Erro ao buscar vagas: {e}")
-        conn.close()
-        return []
+    sb = get_supabase()
+    data_hoje = date.today().isoformat()
+    res = sb.table("vagas_filtradas").select(
+        "titulo, empresa, localizacao, url_vaga, data_coleta, classificacao_funil"
+    ).eq("data_coleta", data_hoje).order("data_coleta", desc=True).execute()
+
+    return [{
+        'titulo': v['titulo'],
+        'empresa': v['empresa'],
+        'localizacao': v['localizacao'] or 'Não especificado',
+        'link': v['url_vaga'],
+        'data': v['data_coleta'],
+        'origem': v['classificacao_funil']
+    } for v in res.data]
+
 
 def buscar_vagas_ativas():
     """
-    Busca todas as vagas tech ativas (exceto as de hoje)
-    
-    Returns:
-        Lista de dicionários com dados das vagas ativas
+    Busca todas as vagas tech ativas (anteriores a hoje).
     """
-    if not os.path.exists(DB_PATH):
-        print(f"❌ Banco não encontrado: {DB_PATH}")
-        return []
-    
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    
-    # Buscar vagas que NÃO são de hoje (vagas ativas antigas)
-    query = """
-    SELECT titulo, empresa, localizacao, url_vaga, data_coleta, classificacao_funil
-    FROM vagas_filtradas 
-    WHERE date(data_coleta) < date('now', 'localtime')
-    ORDER BY data_coleta DESC
-    """
-    
-    try:
-        cursor.execute(query)
-        vagas = cursor.fetchall()
-        conn.close()
-        
-        return [{
-            'titulo': v[0],
-            'empresa': v[1],
-            'localizacao': v[2] if v[2] else 'Não especificado',
-            'link': v[3],
-            'data': v[4],
-            'origem': v[5]
-        } for v in vagas]
-    
-    except sqlite3.OperationalError as e:
-        print(f"❌ Erro ao buscar vagas ativas: {e}")
-        conn.close()
-        return []
+    sb = get_supabase()
+    data_hoje = date.today().isoformat()
+    res = sb.table("vagas_filtradas").select(
+        "titulo, empresa, localizacao, url_vaga, data_coleta, classificacao_funil"
+    ).lt("data_coleta", data_hoje).order("data_coleta", desc=True).execute()
+
+    return [{
+        'titulo': v['titulo'],
+        'empresa': v['empresa'],
+        'localizacao': v['localizacao'] or 'Não especificado',
+        'link': v['url_vaga'],
+        'data': v['data_coleta'],
+        'origem': v['classificacao_funil']
+    } for v in res.data]
+
 
 def contar_vagas_por_origem():
-    """Conta quantas vagas vieram do filtro vs IA"""
-    if not os.path.exists(DB_PATH):
-        return {}
-    
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    
-    cursor.execute("""
-    SELECT classificacao_funil, COUNT(*) 
-    FROM vagas_filtradas 
-    WHERE date(data_coleta) = date('now')
-    GROUP BY classificacao_funil
-    """)
-    
-    resultados = cursor.fetchall()
-    conn.close()
-    
-    stats = {r[0]: r[1] for r in resultados}
+    """Conta quantas vagas vieram do filtro vs IA hoje"""
+    sb = get_supabase()
+    data_hoje = date.today().isoformat()
+    res = sb.table("vagas_filtradas").select("classificacao_funil").eq("data_coleta", data_hoje).execute()
+    stats = {}
+    for v in res.data:
+        k = v['classificacao_funil']
+        stats[k] = stats.get(k, 0) + 1
     return stats
 
+
 if __name__ == '__main__':
-    # Testar busca
     print("🔍 Buscando vagas recentes...\n")
-    
-    vagas = buscar_vagas_recentes(dias=1)
+    vagas = buscar_vagas_recentes()
+    print(f"Total: {len(vagas)} vagas")
     print(f"📊 {len(vagas)} vagas encontradas\n")
     
     for i, vaga in enumerate(vagas[:5], 1):

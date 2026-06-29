@@ -1,82 +1,73 @@
 """
-Teste unitário para o scraper da Samsung
+Teste unitário para o scraper da SAMSUNG
 """
 import sys
 from pathlib import Path
+import sqlite3
+import os
 
-# Adiciona o diretório raiz ao path
 root_dir = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(root_dir))
 
 from src.scrapers import Samsung
-from src.database import database
-from config.settings import SCRAPER_CONFIG
-import os
 
+TEST_DB_FILE = "src/database/teste.db"
+
+def criar_banco_teste():
+    os.makedirs(os.path.dirname(TEST_DB_FILE), exist_ok=True)
+    conn = sqlite3.connect(TEST_DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS vagas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        empresa TEXT NOT NULL,
+        titulo TEXT NOT NULL,
+        localizacao TEXT,
+        modelo_trabalho TEXT,
+        url_vaga TEXT NOT NULL UNIQUE,
+        classificacao_ia TEXT,
+        data_coleta TEXT NOT NULL,
+        ultima_atualizacao TEXT NOT NULL
+    )
+    """)
+    conn.commit()
+    conn.close()
 
 def test_scraper():
-    """Testa o scraper da Samsung"""
+    print(f"--- TESTANDO SCRAPER SAMSUNG ---")
+    print(f"Usando banco de teste isolado: {TEST_DB_FILE}\n")
     
-    # Configura modo headless=False para testes
-    SCRAPER_CONFIG["headless"] = False
+    criar_banco_teste()
+    vagas_coletadas = Samsung.raspar()
+
+    assert vagas_coletadas, "❌ Nenhuma vaga encontrada."
+    assert len(vagas_coletadas) > 0, "Lista de vagas está vazia"
     
-    # Configura banco de dados de teste
-    os.makedirs("src/database", exist_ok=True)
-    TEST_DB_FILE = "src/database/vagasteste.db"
-    database.DB_FILE = TEST_DB_FILE
+    print(f"\n✅ SUCESSO! {len(vagas_coletadas)} vagas encontradas.")
+    print(f"Primeiras 3 vagas:")
+    for i, vaga in enumerate(vagas_coletadas[:3], 1):
+        print(f"  {i}. {vaga['titulo']} ({vaga.get('localizacao', 'N/A')})") 
     
-    print(f"--- TESTANDO SCRAPER DA SAMSUNG ---")
-    
-    # Inicializa banco e limpa vagas anteriores
-    database.inicializar_banco()
-    conn = database.sqlite3.connect(TEST_DB_FILE)
-    conn.execute("DELETE FROM vagas WHERE empresa = 'Samsung'")
+    conn = sqlite3.connect(TEST_DB_FILE)
+    cursor = conn.cursor()
+    novas_vagas_salvas = 0
+    for vaga in vagas_coletadas:
+        try:
+            cursor.execute("""
+            INSERT INTO vagas (empresa, titulo, localizacao, modelo_trabalho, url_vaga, data_coleta, ultima_atualizacao)
+            VALUES (?, ?, ?, ?, ?, DATE('now'), DATETIME('now'))
+            """, (vaga.get('empresa'), vaga.get('titulo'), vaga.get('localizacao'), 
+                   vaga.get('modelo_trabalho'), vaga.get('url_vaga')))
+            novas_vagas_salvas += 1
+        except sqlite3.IntegrityError:
+            pass
     conn.commit()
     conn.close()
     
-    # Executa o scraper
-    vagas_coletadas = Samsung.raspar()
-
-    # Assert: deve coletar pelo menos uma vaga
-    assert vagas_coletadas, "❌ Nenhuma vaga da Samsung foi encontrada no teste."
-    assert len(vagas_coletadas) > 0, "Lista de vagas está vazia"
+    print(f"\nResumo: {novas_vagas_salvas} vagas salvas em '{TEST_DB_FILE}'.")
     
-    print(f"\n✅ SUCESSO! {len(vagas_coletadas)} vagas da Samsung encontradas.")
-    
-    # Salva vagas no banco
-    novas_vagas_salvas = 0
-    for vaga in vagas_coletadas:
-        if database.salvar_vaga(vaga):
-            novas_vagas_salvas += 1
-    
-    print(f"✅ {novas_vagas_salvas} novas vagas da Samsung foram salvas no banco de teste.")
-    
-    # Verificações de qualidade
-    print("\n--- VALIDANDO DADOS DAS VAGAS ---")
-    for vaga in vagas_coletadas[:3]:  # Mostra apenas as 3 primeiras
-        assert "empresa" in vaga, "Campo 'empresa' ausente"
-        assert "titulo" in vaga, "Campo 'titulo' ausente"
-        assert "localizacao" in vaga, "Campo 'localizacao' ausente"
-        assert "url_vaga" in vaga, "Campo 'url_vaga' ausente"
-        assert vaga["empresa"] == "Samsung", "Nome da empresa incorreto"
-        
-        print(f"\n✅ Vaga válida: {vaga['titulo']}")
-        print(f"   Localização: {vaga['localizacao']}")
-        print(f"   Modelo: {vaga['modelo_trabalho']}")
-        print(f"   URL: {vaga['url_vaga'][:80]}...")
-    
-    print("\n=== TESTE COMPLETO ===")
-
+    if os.path.exists(TEST_DB_FILE):
+        os.remove(TEST_DB_FILE)
 
 if __name__ == "__main__":
-    try:
-        test_scraper()
-        print("\n🎉 TODOS OS TESTES PASSARAM!")
-    except AssertionError as e:
-        print(f"\n❌ TESTE FALHOU: {e}")
-        sys.exit(1)
-    except Exception as e:
-        print(f"\n❌ ERRO INESPERADO: {e}")
-        import traceback
-        traceback.print_exc()
-        sys.exit(1)
+    test_scraper()

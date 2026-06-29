@@ -42,9 +42,14 @@ def enviar_emails(teste=False):
     """
     # Configurar Resend
     resend.api_key = os.getenv('RESEND_API_KEY')
+    email_from = os.getenv('EMAIL_FROM', 'noreply@zerodezenovejobs.com.br')
     
     if not resend.api_key:
         print("❌ RESEND_API_KEY não encontrada no .env")
+        return
+    
+    if not email_from:
+        print("❌ EMAIL_FROM não encontrada no .env")
         return
     
     # Buscar assinantes e vagas
@@ -82,8 +87,8 @@ def enviar_emails(teste=False):
         
         try:
             params = {
-                'from': '019_JOBS <onboarding@resend.dev>',  # Email de teste do Resend
-                'to': ['pedroryan.ra@outlook.com'],  # Só pode enviar pro seu email no plano gratuito
+                'from': f'019_JOBS <{email_from}>',
+                'to': [assinante['email']],
                 'subject': f"🎆 {len(vagas)} Novas Vagas • {datetime.now().strftime('%d/%m/%Y')}",
                 'html': html
             }

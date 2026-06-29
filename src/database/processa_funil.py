@@ -1,63 +1,57 @@
-import sqlite3
 import json
 import requests
 from datetime import date
-from config.settings import GEMINI_API_KEY, DB_FILE
+from config.settings import GEMINI_API_KEY
 from src.filtro_funil import filtrar_por_palavras_chave, agrupar_duvidas
+from src.database.supabase_client import get_supabase
 
-# Função para ler as vagas coletadas hoje
 
-def ler_vagas_do_dia(db_path):
+def ler_vagas_do_dia():
     """
-    Retorna todas as vagas coletadas hoje.
-    Essas serão processadas pelo Gemini para classificação.
+    Retorna todas as vagas coletadas hoje do Supabase.
     """
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-    
-    # Buscar vagas coletadas hoje
+    sb = get_supabase()
     data_hoje = date.today().isoformat()
-    cursor.execute('SELECT * FROM vagas WHERE data_coleta = ?', (data_hoje,))
-    vagas_hoje = cursor.fetchall()
-    colunas = [desc[0] for desc in cursor.description]
-    conn.close()
-    
-    return vagas_hoje, colunas
+    res = sb.table("vagas").select("*").eq("data_coleta", data_hoje).execute()
+    return res.data
 
-# Função para criar banco vagas_filtradas com mesma estrutura + classificação
 
-def criar_banco_filtrado(db_path):
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-    
-    # Criar tabela apenas se não existir (preserva dados existentes)
-    cursor.execute('''CREATE TABLE IF NOT EXISTS vagas_filtradas (
-        id INTEGER PRIMARY KEY,
-        empresa TEXT NOT NULL,
-        titulo TEXT NOT NULL,
-        localizacao TEXT,
-        modelo_trabalho TEXT,
-        url_vaga TEXT NOT NULL UNIQUE,
-        classificacao_ia TEXT,
-        data_coleta TEXT NOT NULL,
-        ultima_atualizacao TEXT NOT NULL,
-        classificacao_funil TEXT NOT NULL
-    )''')
-    conn.commit()
-    conn.close()
+def criar_banco_filtrado(_db_path=None):
+    """Compatibilidade: verifica tabela vagas_filtradas no Supabase."""
+    sb = get_supabase()
+    sb.table("vagas_filtradas").select("id").limit(1).execute()
 
-# Função para salvar vagas filtradas
 
-def salvar_vaga_filtrada(db_path, vaga_data, classificacao):
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-    # Inserir vaga com classificação do funil
-    cursor.execute('''INSERT OR REPLACE INTO vagas_filtradas 
-        (id, empresa, titulo, localizacao, modelo_trabalho, url_vaga, classificacao_ia, data_coleta, ultima_atualizacao, classificacao_funil) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', 
-        (*vaga_data, classificacao))
-    conn.commit()
-    conn.close()
+def salvar_vaga_filtrada(_db_path, vaga_data, classificacao):
+    """Insere ou atualiza vaga no Supabase com classificacao do funil."""
+    sb = get_supabase()
+    # vaga_data pode ser dict (Supabase) ou tuple (legado)
+    if isinstance(vaga_data, dict):
+        registro = {
+            "empresa": vaga_data["empresa"],
+            "titulo": vaga_data["titulo"],
+            "localizacao": vaga_data.get("localizacao"),
+            "modelo_trabalho": vaga_data.get("modelo_trabalho"),
+            "url_vaga": vaga_data["url_vaga"],
+            "classificacao_ia": vaga_data.get("classificacao_ia"),
+            "data_coleta": vaga_data["data_coleta"],
+            "ultima_atualizacao": vaga_data["ultima_atualizacao"],
+            "classificacao_funil": classificacao,
+        }
+    else:
+        # tuple: (id, empresa, titulo, localizacao, modelo_trabalho, url_vaga, classificacao_ia, data_coleta, ultima_atualizacao)
+        registro = {
+            "empresa": vaga_data[1],
+            "titulo": vaga_data[2],
+            "localizacao": vaga_data[3],
+            "modelo_trabalho": vaga_data[4],
+            "url_vaga": vaga_data[5],
+            "classificacao_ia": vaga_data[6],
+            "data_coleta": vaga_data[7],
+            "ultima_atualizacao": vaga_data[8],
+            "classificacao_funil": classificacao,
+        }
+    sb.table("vagas_filtradas").upsert(registro, on_conflict="url_vaga").execute()
 
 # Função para chamar Gemini API em lote
 
@@ -125,12 +119,11 @@ Títulos para classificar:
 def processar_funil():
     print("🔄 Iniciando processamento do Funil Inteligente...")
     
-    # Criar/verificar banco filtrado
-    db_filtrado = DB_FILE.replace('vagas.db', 'vagas_filtradas.db')
-    criar_banco_filtrado(db_filtrado)
+    # Verificar tabela filtrada
+    criar_banco_filtrado()
     
     # Ler todas as vagas coletadas HOJE
-    vagas, colunas = ler_vagas_do_dia(DB_FILE)
+    vagas = ler_vagas_do_dia()
     
     if not vagas:
         print("✅ Nenhuma vaga coletada hoje para processar!")
@@ -144,7 +137,7 @@ def processar_funil():
     duvidas = []
     
     for vaga in vagas:
-        titulo = vaga[2]  # Assumindo que título está na posição 2
+        titulo = vaga["titulo"]
         tipo = filtrar_por_palavras_chave(titulo)
         
         if tipo == 'tech':
@@ -160,7 +153,7 @@ def processar_funil():
     
     # Salvar aprovadas direto com marcação "tech funil"
     for vaga in aprovadas_direto:
-        salvar_vaga_filtrada(db_filtrado, vaga, 'tech funil')
+        salvar_vaga_filtrada(None, vaga, 'tech funil')
     
     # Processar dúvidas em lotes
     if duvidas:
@@ -170,23 +163,23 @@ def processar_funil():
             batch_vagas = duvidas[i:i+batch_size]
             
             # Preparar títulos com IDs para a IA
-            titulos_com_ids = [(vaga[0], vaga[2]) for vaga in batch_vagas]
+            titulos_com_ids = [(vaga["id"], vaga["titulo"]) for vaga in batch_vagas]
             
             print(f"\n🤖 Processando lote {i//batch_size + 1} ({len(batch_vagas)} vagas)...")
             resultado_ia = classificar_com_gemini(titulos_com_ids)
             
             # Salvar resultados
             for vaga in batch_vagas:
-                titulo = vaga[2]
+                titulo = vaga["titulo"]
                 if resultado_ia.get(titulo, False):
                     classificacao = 'tech IA'
-                    salvar_vaga_filtrada(db_filtrado, vaga, classificacao)
+                    salvar_vaga_filtrada(None, vaga, classificacao)
                     print(f"✅ Tech (IA): {titulo}")
                 else:
                     classificacao = 'non-tech'
                     print(f"❌ Non-Tech (IA): {titulo}")
     
-    print(f"\n🎉 Funil Inteligente concluído! Resultados salvos em: {db_filtrado}")
+    print(f"\n🎉 Funil Inteligente concluído!")
 
 if __name__ == "__main__":
     processar_funil()

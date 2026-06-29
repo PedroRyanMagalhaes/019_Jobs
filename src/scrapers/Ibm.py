@@ -172,28 +172,4 @@ def raspar():
     return vagas_para_salvar
 
 # --- BLOCO DE TESTE ---
-if __name__ == "__main__":
-    from src.database import database
-    import os
-    
-    os.makedirs("src/database", exist_ok=True)
-    TEST_DB_FILE = "src/database/vagasteste.db"
-    database.DB_FILE = TEST_DB_FILE
-    
-    print(f"--- EXECUTANDO SCRAPER DA IBM EM MODO DE TESTE ---")
-    
-    database.inicializar_banco()
-    conn = database.sqlite3.connect(TEST_DB_FILE)
-    conn.execute("DELETE FROM vagas WHERE empresa = 'IBM'")
-    conn.commit()
-    conn.close()
-    
-    vagas_coletadas = raspar()
 
-    if vagas_coletadas:
-        print(f"\n✅ SUCESSO! {len(vagas_coletadas)} vagas da IBM selecionadas.")
-        for vaga in vagas_coletadas:
-            database.salvar_vaga(vaga)
-        print(f"\nResumo: {len(vagas_coletadas)} novas vagas salvas em '{TEST_DB_FILE}'.")
-    else:
-        print("\n❌ Nenhuma vaga da IBM foi selecionada no teste.")

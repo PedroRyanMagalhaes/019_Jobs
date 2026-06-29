@@ -1,101 +1,70 @@
 """
-Funções para gerenciar assinantes da newsletter
+Funções para gerenciar assinantes da newsletter via Supabase
 """
-import sqlite3
 import uuid
-import os
+from src.database.supabase_client import get_supabase
 
-DB_PATH = os.path.join('src', 'database', 'usuarios_newsletter.db')
 
 def adicionar_assinante(email, nome='', ativo=True):
     """Adiciona um novo assinante"""
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    
+    sb = get_supabase()
     token = str(uuid.uuid4())
-    
-    try:
-        cursor.execute('''
-        INSERT INTO assinantes (email, nome, token_cancelamento, ativo) 
-        VALUES (?, ?, ?, ?)
-        ''', (email, nome, token, 1 if ativo else 0))
-        conn.commit()
-        status = "✅ ATIVO" if ativo else "❌ INATIVO"
-        print(f"✅ {email} adicionado como {status}!")
-        return True
-    except sqlite3.IntegrityError:
+    res = sb.table("assinantes").select("id").eq("email", email).execute()
+    if res.data:
         print(f"⚠️ {email} já está cadastrado")
         return False
-    finally:
-        conn.close()
+    sb.table("assinantes").insert({
+        "email": email,
+        "nome": nome,
+        "token_cancelamento": token,
+        "ativo": ativo
+    }).execute()
+    status = "✅ ATIVO" if ativo else "❌ INATIVO"
+    print(f"✅ {email} adicionado como {status}!")
+    return True
+
 
 def remover_assinante(email=None, token=None):
-    """Remove assinante por email ou token"""
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    
+    """Desativa assinante por email ou token"""
+    sb = get_supabase()
     if token:
-        cursor.execute('UPDATE assinantes SET ativo = 0 WHERE token_cancelamento = ?', (token,))
+        sb.table("assinantes").update({"ativo": False}).eq("token_cancelamento", token).execute()
     elif email:
-        cursor.execute('UPDATE assinantes SET ativo = 0 WHERE email = ?', (email,))
+        sb.table("assinantes").update({"ativo": False}).eq("email", email).execute()
     else:
         print("❌ Forneça email ou token")
         return False
-    
-    conn.commit()
-    conn.close()
-    print(f"✅ Assinante removido com sucesso!")
+    print("✅ Assinante removido com sucesso!")
     return True
+
 
 def listar_assinantes(apenas_ativos=True):
     """Lista todos os assinantes"""
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    
+    sb = get_supabase()
+    query = sb.table("assinantes").select("id, email, nome, data_inscricao, ativo")
     if apenas_ativos:
-        cursor.execute('SELECT id, email, nome, data_inscricao FROM assinantes WHERE ativo = 1')
-    else:
-        cursor.execute('SELECT id, email, nome, data_inscricao, ativo FROM assinantes')
-    
-    assinantes = cursor.fetchall()
-    conn.close()
-    
+        query = query.eq("ativo", True)
+    res = query.execute()
+    assinantes = res.data
     print(f"\n📧 Total de assinantes: {len(assinantes)}\n")
     for a in assinantes:
-        if apenas_ativos:
-            print(f"ID: {a[0]} | Email: {a[1]} | Nome: {a[2]} | Data: {a[3]}")
-        else:
-            status = "✅ Ativo" if a[4] else "❌ Inativo"
-            print(f"ID: {a[0]} | Email: {a[1]} | Nome: {a[2]} | Data: {a[3]} | {status}")
-    
+        status = "✅ Ativo" if a["ativo"] else "❌ Inativo"
+        print(f"ID: {a['id']} | Email: {a['email']} | Nome: {a['nome']} | Data: {a['data_inscricao']} | {status}")
     return assinantes
+
 
 def buscar_assinantes_ativos():
     """Retorna lista de assinantes ativos para envio"""
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    
-    cursor.execute('''
-    SELECT email, nome, token_cancelamento 
-    FROM assinantes 
-    WHERE ativo = 1
-    ''')
-    
-    assinantes = cursor.fetchall()
-    conn.close()
-    
+    sb = get_supabase()
+    res = sb.table("assinantes").select("email, nome, token_cancelamento").eq("ativo", True).execute()
     return [{
-        'email': a[0],
-        'nome': a[1],
-        'token': a[2]
-    } for a in assinantes]
+        'email': a['email'],
+        'nome': a['nome'],
+        'token': a['token_cancelamento']
+    } for a in res.data]
+
 
 if __name__ == '__main__':
-    # Exemplo de uso
-    print("=== Gerenciamento de Assinantes ===\n")
-    
-    # Adicionar você mesmo como primeiro assinante
+    print("=== Gerenciamento de Assinantes ===")
     adicionar_assinante('seu_email@exemplo.com', 'Seu Nome')
-    
-    # Listar todos
     listar_assinantes()
