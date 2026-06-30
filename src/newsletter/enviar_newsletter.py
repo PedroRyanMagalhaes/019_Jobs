@@ -11,34 +11,35 @@ from dotenv import load_dotenv
 # Adicionar o diretório raiz ao path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
-from src.newsletter.buscar_vagas import buscar_vagas_recentes, buscar_vagas_ativas, contar_vagas_por_origem
-from src.newsletter.gerenciar_assinantes import buscar_assinantes_ativos
+from src.newsletter.buscar_vagas import buscar_vagas_recentes, contar_vagas_filtradas, contar_vagas_por_origem
+from src.newsletter.gerenciar_assinantes import buscar_assinantes_ativos, buscar_assinante_dev
+from config.settings import GITHUB_PAGES_URL
 
 # Carregar variáveis de ambiente
 load_dotenv()
 
-def renderizar_newsletter(vagas, vagas_ativas, token_usuario=''):
+def renderizar_newsletter(vagas, total_vagas_ativas, pagina_url, token_usuario=''):
     """Renderiza template HTML com Jinja2"""
-    # Configurar Jinja2 para buscar templates
     template_dir = os.path.join('src', 'templates')
     env = Environment(loader=FileSystemLoader(template_dir))
     template = env.get_template('newsletter_base.html')
-    
+
     return template.render(
         data_hoje=datetime.now().strftime('%d/%m/%Y'),
         total_vagas=len(vagas),
         vagas=vagas,
-        vagas_ativas=vagas_ativas,
-        total_vagas_ativas=len(vagas_ativas),
+        total_vagas_ativas=total_vagas_ativas,
+        pagina_url=pagina_url,
         token=token_usuario
     )
 
-def enviar_emails(teste=False):
+def enviar_emails(teste=False, dev=False):
     """
-    Envia newsletter para todos os assinantes
-    
+    Envia newsletter para os assinantes.
+
     Args:
-        teste: Se True, envia apenas para você mesmo
+        teste: Se True, envia apenas para o primeiro assinante da lista
+        dev:   Se True, envia apenas para o assinante id=1 (ambiente de desenvolvimento)
     """
     # Configurar Resend
     resend.api_key = os.getenv('RESEND_API_KEY')
@@ -53,17 +54,22 @@ def enviar_emails(teste=False):
         return
     
     # Buscar assinantes e vagas
-    assinantes = buscar_assinantes_ativos()
+    if dev:
+        assinantes = buscar_assinante_dev()
+        print("🛠️  MODO DEV — enviando apenas para assinante id=1")
+    else:
+        assinantes = buscar_assinantes_ativos()
     vagas = buscar_vagas_recentes(dias=1)
-    vagas_ativas = buscar_vagas_ativas()
-    
+    total_vagas_ativas = contar_vagas_filtradas()
+    pagina_url = GITHUB_PAGES_URL
+
     if not assinantes:
         print("⚠️ Nenhum assinante ativo encontrado")
         return
-    
+
     print(f"\n📧 Preparando envio para {len(assinantes)} assinantes...")
-    print(f"🚀 {len(vagas)} vagas encontradas hoje")
-    print(f"📋 {len(vagas_ativas)} vagas ativas no total")
+    print(f"🚀 {len(vagas)} vagas novas hoje")
+    print(f"📋 {total_vagas_ativas} vagas ativas no total")
     
     # Estatísticas
     stats = contar_vagas_por_origem()
@@ -83,7 +89,7 @@ def enviar_emails(teste=False):
     erros = 0
     
     for assinante in assinantes:
-        html = renderizar_newsletter(vagas, vagas_ativas, assinante['token'])
+        html = renderizar_newsletter(vagas, total_vagas_ativas, pagina_url, assinante['token'])
         
         try:
             params = {
@@ -111,7 +117,8 @@ if __name__ == '__main__':
     import argparse
     
     parser = argparse.ArgumentParser(description='Enviar newsletter de vagas tech')
-    parser.add_argument('--teste', action='store_true', help='Modo teste (envia apenas para você)')
+    parser.add_argument('--teste', action='store_true', help='Modo teste (envia apenas para o primeiro assinante)')
+    parser.add_argument('--dev', action='store_true', help='Modo dev (envia apenas para assinante id=1)')
     args = parser.parse_args()
-    
-    enviar_emails(teste=args.teste)
+
+    enviar_emails(teste=args.teste, dev=args.dev)

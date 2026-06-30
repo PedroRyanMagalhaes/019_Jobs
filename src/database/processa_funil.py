@@ -118,35 +118,47 @@ Títulos para classificar:
 
 def processar_funil():
     print("🔄 Iniciando processamento do Funil Inteligente...")
-    
-    # Verificar tabela filtrada
+
     criar_banco_filtrado()
-    
+
     # Ler todas as vagas coletadas HOJE
     vagas = ler_vagas_do_dia()
-    
+
     if not vagas:
         print("✅ Nenhuma vaga coletada hoje para processar!")
         return
-    
-    print(f"📊 {len(vagas)} vagas coletadas HOJE para processar")
-    
+
+    print(f"📊 {len(vagas)} vagas coletadas HOJE")
+
+    # Filtrar vagas que já foram classificadas (evita re-chamar a IA em execuções repetidas)
+    sb = get_supabase()
+    res_filtradas = sb.table("vagas_filtradas").select("url_vaga").execute()
+    urls_ja_classificadas = {v["url_vaga"] for v in res_filtradas.data}
+
+    vagas_novas = [v for v in vagas if v["url_vaga"] not in urls_ja_classificadas]
+
+    if not vagas_novas:
+        print("✅ Todas as vagas de hoje já foram classificadas. Funil ignorado.")
+        return
+
+    print(f"🆕 {len(vagas_novas)} vagas novas para classificar ({len(vagas) - len(vagas_novas)} já classificadas)")
+
     # Separar por tipo
     aprovadas_direto = []
     reprovadas_direto = []
     duvidas = []
-    
-    for vaga in vagas:
+
+    for vaga in vagas_novas:
         titulo = vaga["titulo"]
         tipo = filtrar_por_palavras_chave(titulo)
-        
+
         if tipo == 'tech':
             aprovadas_direto.append(vaga)
         elif tipo == 'non-tech':
             reprovadas_direto.append(vaga)
         else:  # duvida
             duvidas.append(vaga)
-    
+
     print(f"✅ Aprovadas direto (palavras-chave): {len(aprovadas_direto)}")
     print(f"❌ Reprovadas direto (palavras-chave): {len(reprovadas_direto)}")
     print(f"❓ Enviando para IA: {len(duvidas)}")

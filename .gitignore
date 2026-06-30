@@ -84,3 +84,17 @@ playwright/.cache/
 
 # Arquivos específicos do projeto
 anotacoes.txt/
+
+# Debug de scrapers
+*_debug.html
+debug_*.html
+
+# Screenshots e assets locais
+src/assets/
+
+# Planilhas e documentos locais
+*.xlsx
+*.xls
+
+# Backups locais do banco
+src/database/backups/

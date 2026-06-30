@@ -46,6 +46,13 @@ def buscar_vagas_ativas():
     } for v in res.data]
 
 
+def contar_vagas_filtradas():
+    """Conta o total de vagas ativas na tabela vagas_filtradas."""
+    sb = get_supabase()
+    res = sb.table("vagas_filtradas").select("id", count="exact").execute()
+    return res.count or 0
+
+
 def contar_vagas_por_origem():
     """Conta quantas vagas vieram do filtro vs IA hoje"""
     sb = get_supabase()

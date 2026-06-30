@@ -164,7 +164,7 @@ def raspar(headless=None):
                     if any(palavra in titulo_lower for palavra in ['remoto', 'remote', 'home office']):
                         modelo_trabalho = "Remoto"
                     elif any(palavra in titulo_lower for palavra in ['híbrido', 'hibrido', 'hybrid']):
-                        modelo_trabalho = "Hibrido"
+                        modelo_trabalho = "Híbrido"
                     
                     # Cria o dicionário com os dados da vaga
                     dados_vaga = {

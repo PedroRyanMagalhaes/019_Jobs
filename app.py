@@ -24,7 +24,8 @@ from src.scrapers import Goodyear
 from src.scrapers import Toyota
 from src.scrapers import Tresm
 from src.scrapers import Cnhindustrial
-from config.settings import SCRAPERS_ATIVOS
+from config.settings import SCRAPERS_ATIVOS, EMPRESA_URLS, ENV
+
 
 # Mapeamento de nomes para módulos
 SCRAPERS_MAP = {
@@ -56,9 +57,19 @@ SCRAPERS_MAP = {
     
 }
 
-# Criar lista de scrapers a partir das configurações
+def _url_empresa(modulo_key: str) -> str:
+    """Busca URL em EMPRESA_URLS com fallback case-insensitive."""
+    if modulo_key in EMPRESA_URLS:
+        return EMPRESA_URLS[modulo_key]
+    normalizado = modulo_key.lower().replace("&", "").replace(" ", "")
+    for k, url in EMPRESA_URLS.items():
+        if k.lower() == normalizado:
+            return url
+    return ""
+
+# Criar lista de scrapers a partir das configurações: (módulo, nome_display, modulo_key)
 SCRAPERS_A_EXECUTAR = [
-    (SCRAPERS_MAP[nome_modulo], nome_empresa) 
+    (SCRAPERS_MAP[nome_modulo], nome_empresa, nome_modulo)
     for nome_modulo, nome_empresa in SCRAPERS_ATIVOS
 ]
 
@@ -73,12 +84,12 @@ def main():
     database.iniciar_ciclo_scraping()
 
     total_novas_vagas = 0
+    scrapers_vazios = []  # (nome_empresa, url) para alerta
 
-    for scraper_module, nome_empresa in SCRAPERS_A_EXECUTAR:
+    for scraper_module, nome_empresa, modulo_key in SCRAPERS_A_EXECUTAR:
         print(f"\n--- PASSO: Executando Scraper da {nome_empresa} ---")
         vagas_coletadas = []
         try:
-            # Padronização: todo módulo de scraper deve ter uma função chamada 'raspar()'
             vagas_coletadas = scraper_module.raspar()
         except Exception as e:
             print(f"❌ Falha crítica ao executar o scraper da {nome_empresa}: {e}")
@@ -92,7 +103,17 @@ def main():
             print(f"\nResumo {nome_empresa}: {novas_vagas_salvas} novas vagas foram salvas.")
             total_novas_vagas += novas_vagas_salvas
         else:
-            print(f"Nenhuma vaga nova da {nome_empresa} para salvar.")
+            print(f"⚠️  Nenhuma vaga retornada pela {nome_empresa}.")
+            scrapers_vazios.append((nome_empresa, _url_empresa(modulo_key)))
+
+    # Alerta de scrapers vazios
+    if scrapers_vazios:
+        print(f"\n--- ALERTA: {len(scrapers_vazios)} scraper(s) sem vagas ---")
+        try:
+            from src.newsletter.enviar_alerta import enviar_alerta_scrapers_vazios
+            enviar_alerta_scrapers_vazios(scrapers_vazios)
+        except Exception as e:
+            print(f"❌ Erro ao enviar alerta: {e}")
 
     print("\n--- PASSO FINAL: Finalizando Ciclo de Scraping ---")
     database.finalizar_ciclo_scraping()
@@ -109,20 +130,29 @@ def main():
     print(f"   📦 Total de vagas removidas (histórico): {vagas_removidas}")
     print("==============================================")
 
-    # Passo extra: Processar Funil Inteligente e salvar em vagas_filtradas.db
+    # Passo extra: Processar Funil Inteligente e salvar em vagas_filtradas
     print("\n--- PASSO EXTRA: Processando Funil Inteligente ---")
     try:
         from src.database.processa_funil import processar_funil
         processar_funil()
-        print("✅ Funil Inteligente executado com sucesso. Resultados salvos em vagas_filtradas.db.")
+        print("✅ Funil Inteligente executado com sucesso.")
     except Exception as e:
         print(f"❌ Erro ao executar o Funil Inteligente: {e}")
-    
+
+    # Passo extra: Gerar página estática e publicar no GitHub Pages
+    print("\n--- PASSO EXTRA: Gerando Página Estática ---")
+    try:
+        from src.gerar_pagina import gerar_pagina
+        gerar_pagina()
+    except Exception as e:
+        print(f"❌ Erro ao gerar página estática: {e}")
+
     # Passo final: Enviar Newsletter
     print("\n--- PASSO FINAL: Enviando Newsletter ---")
     try:
         from src.newsletter.enviar_newsletter import enviar_emails
-        enviar_emails(teste=False)  # Mude para teste=True se quiser testar primeiro
+        modo_dev = (ENV == "dev")
+        enviar_emails(dev=modo_dev)
         print("✅ Newsletter enviada com sucesso!")
     except Exception as e:
         print(f"❌ Erro ao enviar newsletter: {e}")

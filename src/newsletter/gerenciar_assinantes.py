@@ -64,6 +64,16 @@ def buscar_assinantes_ativos():
     } for a in res.data]
 
 
+def buscar_assinante_dev():
+    """Retorna apenas o assinante id=1 (usado em modo dev)"""
+    sb = get_supabase()
+    res = sb.table("assinantes").select("email, nome, token_cancelamento").eq("id", 1).execute()
+    if not res.data:
+        raise ValueError("Assinante id=1 não encontrado na tabela assinantes")
+    a = res.data[0]
+    return [{'email': a['email'], 'nome': a['nome'], 'token': a['token_cancelamento']}]
+
+
 if __name__ == '__main__':
     print("=== Gerenciamento de Assinantes ===")
     adicionar_assinante('seu_email@exemplo.com', 'Seu Nome')

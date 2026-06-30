@@ -92,3 +92,9 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "SUA_API_KEY_AQUI")  # Lê do arqui
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
 SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+
+# Ambiente: "dev" só manda email pro id=1, "prod" manda pra todos
+ENV = os.getenv("ENV", "dev")
+
+# URL pública do GitHub Pages (ex: https://seu-usuario.github.io/019jobs)
+GITHUB_PAGES_URL = os.getenv("GITHUB_PAGES_URL", "")

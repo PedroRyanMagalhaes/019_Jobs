@@ -90,7 +90,7 @@ def raspar():
                         "empresa": "Bosch",
                         "titulo": titulo,
                         "localizacao": "Campinas",
-                        "modelo_trabalho": "Hibrido",
+                        "modelo_trabalho": "Híbrido",
                         "url_vaga": url_vaga,
                     }
                     vagas_encontradas.append(dados_vaga)
